@@ -23,6 +23,39 @@ Instruções para o Claude ao trabalhar neste repositório.
 - **Conversão HTML → PDF:** WeasyPrint gerou 106 páginas em vez de 28 no Skaravana. Usar só Chromium headless com o tamanho de página do template.
 - **Biblioteca Kindle:** a Amazon não sobrescreve documentos de mesmo nome. A limpeza de versões antigas é feita em `amazon.com.br`, página "Gerencie seu conteúdo e dispositivos", no navegador do app, com a lista confirmada pelo usuário antes de excluir.
 
+## Como atender um pedido (operação)
+
+O código exige Python 3.13 e roda neste ambiente (contêiner). A pasta `G:` não monta no
+shell do dispositivo; ela é lida e gravada pelas ferramentas de arquivo do dispositivo.
+
+1. `partituras iniciar --trabalho T [--pedido <horário do pedido>] [--sem-envio]`, antes de
+   qualquer leitura da pasta (TMP-01).
+2. Trazer da pasta, com `device_stage_files`, o HTML da fanfarra, os PDFs dela e
+   `automacao/manifestos/<último PDF>.manifest.json`, e montar o espelho em
+   `/mnt/user-data/outputs/partituras_claude` com esses mesmos nomes. Uma listagem só (FLX-01).
+3. `partituras preparar --trabalho T --pasta <espelho> --fanfarra <Nome>`.
+4. Set list novo ou geração integral: `partituras gerar --trabalho T [--setlist arquivo.txt]`.
+   Troca de música: `partituras substituir --trabalho T --pasta <espelho> --musica "<Nome>"
+   --imagens <png...>`.
+5. Inspecionar de verdade as páginas em `T/renders` (folhas de até 6 páginas; página com
+   alerta aberta sozinha). No template overlay, conferir também os cinco itens de LAY-07.
+   Registrar com `partituras aprovar --trabalho T --inspecionadas <páginas>
+   [--achado N:descrição]`. Achado reprova; corrigir e gerar de novo.
+6. `partituras promover --trabalho T --pasta <espelho>`. Depois, gravar na pasta real na
+   ordem de PRO-03 com `device_commit_files`: HTML (se mudou, com `expectedMtimeMs`) →
+   PDF novo → reler com `device_stage_files` e conferir o SHA-256 com o inspecionado →
+   manifesto.
+7. Kindle (KIN-03): PDF acima de ~3,1 MB vai pelo Gmail no navegador do app, "Inserir arquivos
+   do Drive", como anexo. Registrar cada tentativa com `partituras kindle`. Depois do sucesso,
+   propor a lista de KIN-06 (todos os outros documentos versionados da fanfarra) e só apagar
+   com confirmação.
+8. `partituras finalizar --trabalho T --pasta <espelho>` e gravar na pasta real o relatório e
+   o `historico_execucoes.jsonl` do espelho. Responder com o relatório.
+
+Estado após o piloto de 16/11/2026: `Xamego_v01.pdf`, `Skaravana_v01.pdf` e
+`Fanfarock_v01.pdf` aprovados na pasta, com manifesto; os HTMLs já declaram a versão de
+template (22, 06 e 10). A primeira troca de música em cada fanfarra já reaproveita a inspeção.
+
 ## Convenções
 
 - Código, nomes de módulos e mensagens em português.

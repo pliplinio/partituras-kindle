@@ -89,7 +89,7 @@ def _desenhar_indice(doc: pymupdf.Document, plano: Plano) -> list[int]:
             y = TOPO_INDICE + r * passo
             pagina.insert_textbox(
                 pymupdf.Rect(xs[c], y, xs[c] + largura, y + 24.0),
-                entrada.rotulo,
+                entrada.rotulo_pdf,
                 fontsize=FONTE_INDICE,
                 fontname="helv",
                 align=pymupdf.TEXT_ALIGN_LEFT,
@@ -137,7 +137,7 @@ def _links_frente(doc: pymupdf.Document, plano: Plano) -> tuple[int, int]:
     # Inserção linha a linha da tabela, como na versão anterior: a ordem dos links
     # entra no fingerprint e precisa ser estável entre versões.
     for destino in _linha_a_linha(plano.indice):
-        achado = linha_exata(candidatas, destino.entrada.rotulo, usadas)
+        achado = linha_exata(candidatas, destino.entrada.rotulo_pdf, usadas)
         if achado is None:
             falhas.append(f"índice: {destino.entrada.titulo} não encontrado")
             continue

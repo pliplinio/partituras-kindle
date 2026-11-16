@@ -94,6 +94,24 @@ def test_rotulo_do_indice_limitado_a_22():
 
 
 @pytest.mark.parametrize(
+    ("titulo", "pdf"),
+    [
+        ("It\u2019s my life", "It's my life"),
+        ("I love rock \u2019n\u2019 roll", "I love rock 'n' roll"),
+        ("\u201cAspas\u201d \u2013 travess\u00e3o\u2026", '"Aspas" - travessão...'),
+        ("Cari\u00f1ito \u00e9 Cora\u00e7\u00e3o", "Cariñito é Coração"),
+    ],
+)
+def test_rotulo_do_pdf_so_com_caracteres_desenhaveis(titulo, pdf):
+    """IDX-08: o PDF troca a pontuação tipográfica; o HTML mantém o título."""
+    r = montar_repertorio([p("s1", "x", 1, 1, titulo)], None, True)
+    entrada = entradas_indice(r)[0]
+    assert entrada.rotulo_pdf == pdf[:22]
+    assert entrada.rotulo == titulo[:22]
+    assert all(ord(c) < 256 for c in entrada.rotulo_pdf)
+
+
+@pytest.mark.parametrize(
     ("total", "esperado"),
     [
         (29, [10, 10, 9]),

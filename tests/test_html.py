@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import re
 
 import pytest
@@ -14,6 +15,7 @@ from partituras.html.edicao import (
     gravar_versao_template,
     reconstruir_indice,
     reconstruir_setlist,
+    sha256_imagem_incorporada,
 )
 from partituras.html.overlay import posicoes
 
@@ -217,6 +219,15 @@ def test_overlay_imagem_inteira_e_cabecalho_transparente(imagens):
     assert rel.modo == "overlay"
     assert 'class="score-header-overlay"' in secao
     assert "clip-path" not in secao and "object-fit" not in secao
+
+
+def test_imagem_recebida_entra_sem_alteracao_de_pixels(imagens):
+    """LAY-05: o código não limpa nem altera a imagem; os bytes entram como vieram."""
+    doc = Documento.de_bytes(construir_html(overlay=True))
+    arquivos = imagens((1, 1, 1))
+    novo, rel = gravar_musica(doc, PedidoMusica("X", "Nova", arquivos), False)
+    secao = novo.secao_por_id(rel.ids[0]).texto
+    assert sha256_imagem_incorporada(secao) == hashlib.sha256(arquivos[0].read_bytes()).hexdigest()
 
 
 def test_modo_do_grupo_e_preservado(imagens):

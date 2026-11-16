@@ -3,6 +3,25 @@
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/);
 versões seguem [SemVer](https://semver.org/lang/pt-BR/).
 
+## [0.6.1] - 2026-11-16
+
+Correção achada na inspeção visual do piloto.
+
+### Corrigido
+
+- IDX-08 (novo): o índice desenhado no PDF mostrava "?" no lugar do apóstrofo tipográfico
+  ("It’s my life" no Fanfarock), porque a fonte do índice só representa Latin-1. O texto
+  desenhado passa a trocar a pontuação tipográfica por equivalente simples; o HTML não muda.
+- O gate passa a comparar o texto desenhado no índice caractere a caractere, para barrar
+  automaticamente esse tipo de troca de glifo.
+
+### Adicionado
+
+- LAY-07: no template overlay, o registro de inspeção inclui os cinco itens extras.
+- LAY-05 (esclarecida): o código nunca altera os pixels da imagem recebida; teste garante.
+- `CLAUDE.md`: procedimento de operação, como no piloto. Matriz na etapa 7: todas as regras
+  com teste.
+
 ## [0.6.0] - 2026-11-16
 
 Decisões do usuário antes do piloto.

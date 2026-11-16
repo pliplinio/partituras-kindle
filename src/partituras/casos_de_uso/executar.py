@@ -273,13 +273,15 @@ def aprovar(estado: Estado, inspecionadas: list[int], achados: dict[int, str]) -
         candidato = Path(estado.dados["candidato"])
         m = json.loads((estado.trabalho / "candidato.manifest.json").read_text())
         d = delta(m, _anterior(estado))
-        reg = registrar_inspecao(candidato, d, inspecionadas, achados)
+        overlay = Documento.de_bytes((estado.trabalho / "candidato.html").read_bytes()).usa_overlay
+        reg = registrar_inspecao(candidato, d, inspecionadas, achados, overlay)
         if reg.sha256 != estado.dados["candidato_sha256"]:
             raise Bloqueio("o candidato mudou depois do fingerprint")
         estado.dados.update(
             inspecao_sha256=reg.sha256,
             paginas_inspecionadas=reg.inspecionadas,
             achados={str(k): v for k, v in reg.achados.items()},
+            checklist_inspecao=list(reg.checklist),
         )
         if not reg.aprovada:
             estado.dados["processamento_ok"] = False
