@@ -37,12 +37,18 @@ ruff check . && ruff format --check .
 pytest
 ```
 
+Testes com os repertórios reais (fora do CI), apontando para a pasta sincronizada:
+
+```bash
+PARTITURAS_HTML_REAIS="G:/Meu Drive/Tuba/partituras_claude" pytest tests/test_html_reais.py
+```
+
 ## Etapas
 
 | Etapa | Conteúdo | Situação |
 | --- | --- | --- |
-| 1 | Fundação: estrutura, CI, `REGRAS.md`, matriz regra → teste | em andamento |
-| 2 | Domínio e HTML | — |
+| 1 | Fundação: estrutura, CI, `REGRAS.md`, matriz regra → teste | concluída |
+| 2 | Domínio e HTML | em revisão |
 | 3 | PDF integral | — |
 | 4 | Fingerprint e caminho rápido | — |
 | 5 | Comandos `run`/`promote` e adaptadores | — |
