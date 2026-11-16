@@ -4,25 +4,30 @@
 # O CI falha se uma regra de REGRAS.md faltar aqui, se houver regra a mais,
 # ou se uma regra com etapa <= ETAPA_ATUAL estiver sem teste.
 
-etapa_atual: 4
+etapa_atual: 5
 
 regras:
   ARQ-01:
     etapa: 5
-    testes: []
+    testes: 
+      - test_execucao.py::test_pasta_chatgpt_proibida
   ARQ-02:
     etapa: 5
-    testes: []
+    testes: 
+      - test_projeto.py::test_codigo_vive_so_no_repositorio
   ARQ-03:
     etapa: 2
     testes: 
       - test_versoes.py::test_fonte_e_o_html_nunca_pptx
   ARQ-04:
     etapa: 5
-    testes: []
+    testes: 
+      - test_execucao.py::test_pasta_local_preserva_bytes_e_id
+      - test_golden.py::test_fluxo_completo_pelo_cli
   ARQ-05:
     etapa: 5
-    testes: []
+    testes: 
+      - test_golden.py::test_fluxo_completo_pelo_cli
   HTML-01:
     etapa: 2
     testes: 
@@ -457,46 +462,65 @@ regras:
       - test_fingerprint.py::test_manifesto_aprovado_registra_inspecao_e_origem
   PRO-01:
     etapa: 5
-    testes: []
+    testes: 
+      - test_execucao.py::test_promocao_recusa_bytes_nao_inspecionados
+      - test_golden.py::test_inspecao_reprovada_nao_promove
   PRO-02:
     etapa: 5
-    testes: []
+    testes: 
+      - test_execucao.py::test_promocao_recusa_bytes_nao_inspecionados
   PRO-03:
     etapa: 5
-    testes: []
+    testes: 
+      - test_execucao.py::test_promocao_na_ordem_com_conferencia
+      - test_execucao.py::test_html_alterado_por_fora_bloqueia
   PRO-04:
     etapa: 5
-    testes: []
+    testes: 
+      - test_execucao.py::test_falha_no_pdf_restaura_html
   PRO-06:
     etapa: 5
-    testes: []
+    testes: 
+      - test_execucao.py::test_acoes_necessarias_antes_do_processamento
   PRO-05:
     etapa: 5
-    testes: []
+    testes: 
+      - test_execucao.py::test_bloqueio_so_depois_de_todas_as_tentativas
   KIN-01:
     etapa: 5
-    testes: []
+    testes: 
+      - test_execucao.py::test_envio_nao_solicitado
+      - test_golden.py::test_fluxo_completo_pelo_cli
   KIN-02:
     etapa: 5
-    testes: []
+    testes: 
+      - test_execucao.py::test_caminho_de_envio_por_tamanho
   KIN-03:
     etapa: 5
-    testes: []
+    testes: 
+      - test_execucao.py::test_caminho_de_envio_por_tamanho
   KIN-04:
     etapa: 5
-    testes: []
+    testes: 
+      - test_execucao.py::test_bloqueio_so_depois_de_todas_as_tentativas
   KIN-05:
     etapa: 5
-    testes: []
+    testes: 
+      - test_execucao.py::test_bloqueio_so_depois_de_todas_as_tentativas
   KIN-06:
     etapa: 5
-    testes: []
+    testes: 
+      - test_execucao.py::test_versoes_antigas_do_kindle
   FLX-01:
     etapa: 5
-    testes: []
+    testes: 
+      - test_execucao.py::test_plano_congelado_com_anterior_aprovado
+      - test_execucao.py::test_descoberta_nova_exige_reiniciar
   FLX-02:
     etapa: 5
-    testes: []
+    testes: 
+      - test_execucao.py::test_plano_congelado_com_anterior_aprovado
+      - test_golden.py::test_fluxo_completo_pelo_cli
   FLX-03:
     etapa: 4
     testes: 
@@ -516,53 +540,72 @@ regras:
       - test_nomes.py::test_aproximacao_inequivoca_nao_interrompe
   TMP-01:
     etapa: 5
-    testes: []
+    testes: 
+      - test_execucao.py::test_cronometro_comeca_antes_do_drive_e_nao_reinicia
   TMP-02:
     etapa: 5
-    testes: []
+    testes: 
+      - test_execucao.py::test_cronometro_comeca_antes_do_drive_e_nao_reinicia
   TMP-03:
     etapa: 5
-    testes: []
+    testes: 
+      - test_execucao.py::test_total_e_relogio_nao_soma_de_etapas
   TMP-04:
     etapa: 5
-    testes: []
+    testes: 
+      - test_execucao.py::test_total_e_relogio_nao_soma_de_etapas
   TMP-05:
     etapa: 5
-    testes: []
+    testes: 
+      - test_execucao.py::test_total_e_relogio_nao_soma_de_etapas
   TMP-06:
     etapa: 5
-    testes: []
+    testes: 
+      - test_execucao.py::test_contadores_previstos
+      - test_golden.py::test_fluxo_completo_pelo_cli
   TMP-07:
     etapa: 5
-    testes: []
+    testes: 
+      - test_execucao.py::test_tempo_incompleto_reprova
   HIS-01:
     etapa: 5
-    testes: []
+    testes: 
+      - test_execucao.py::test_historico_so_acrescenta_e_sem_segredos
+      - test_golden.py::test_fluxo_completo_pelo_cli
   HIS-02:
     etapa: 5
-    testes: []
+    testes: 
+      - test_execucao.py::test_registro_historico_completo_mesmo_em_falha
   HIS-03:
     etapa: 5
-    testes: []
+    testes: 
+      - test_execucao.py::test_historico_so_acrescenta_e_sem_segredos
   REL-06:
     etapa: 3
     testes: 
       - test_plano.py::test_relatorio_pre_geracao
   REL-01:
     etapa: 5
-    testes: []
+    testes: 
+      - test_golden.py::test_fluxo_completo_pelo_cli
+      - test_golden.py::test_inspecao_reprovada_nao_promove
   REL-02:
     etapa: 5
-    testes: []
+    testes: 
+      - test_execucao.py::test_relatorio_formato
   REL-03:
     etapa: 5
-    testes: []
+    testes: 
+      - test_execucao.py::test_relatorio_formato
   REL-04:
     etapa: 5
-    testes: []
+    testes: 
+      - test_execucao.py::test_relatorio_formato
+      - test_execucao.py::test_status_final_exige_etapas_obrigatorias
   REL-05:
     etapa: 5
-    testes: []
+    testes: 
+      - test_execucao.py::test_status_final_exige_etapas_obrigatorias
   TST-01:
     etapa: 3
     testes: 
