@@ -3,6 +3,27 @@
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/);
 versões seguem [SemVer](https://semver.org/lang/pt-BR/).
 
+## [0.3.0] - 2026-11-15
+
+### Adicionado
+
+- Plano de distribuição das páginas (set list, repetições, preservação, auxiliares, índice) e relatório pré-geração.
+- Conversão com o Chromium fixado pelo Playwright 1.63 (Chrome 153.0.8010.12), papel fixo de 880 px × 487,92 pt, uma página por slide.
+- Materialização: índice desenhado em 3 colunas, links do set list por ocorrência, do índice pela primeira ocorrência e retornos GoTo de título e `ABC`.
+- Gate estrutural independente, com cobertura mínima de 90% dos links sobre o texto.
+- Laboratório da Fanfateste (cenários 1 a 4 e 7 a 12) e testes negativos de corrupção.
+- Chromium instalado no CI.
+
+### Verificado com repertórios reais
+
+- Skaravana: PDF idêntico ao v14 aprovado em pixels (110 DPI), texto e links nas 28 páginas.
+- Xamego e Fanfarock: gate aprovado. O Xamego v38 aprovado tem página de 880×650 pt (outro conversor); o primeiro PDF do Xamego pela versão Claude exige inspeção integral (INS-04).
+
+### Mudado em relação à versão ChatGPT
+
+- NOM-01: inclusão de nome só conta por palavras inteiras ("Lidio" não abrevia "Mixolidio").
+- NOM-03: aproximação entre 0,68 e 0,80 é ambiguidade e pede confirmação, em vez de criar o link.
+
 ## [0.2.0] - 2026-11-15
 
 ### Adicionado

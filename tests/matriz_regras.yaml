@@ -4,7 +4,7 @@
 # O CI falha se uma regra de REGRAS.md faltar aqui, se houver regra a mais,
 # ou se uma regra com etapa <= ETAPA_ATUAL estiver sem teste.
 
-etapa_atual: 2
+etapa_atual: 3
 
 regras:
   ARQ-01:
@@ -189,16 +189,22 @@ regras:
   IDX-05:
     etapa: 3
     testes: 
+      - test_golden.py::test_08_repeticao_multipagina
       - test_html.py::test_indice_aponta_para_primeira_pagina
+      - test_plano.py::test_indice_aponta_para_primeira_ocorrencia
   IDX-06:
     etapa: 3
-    testes: []
+    testes: 
+      - test_golden.py::test_indice_fisico_em_tres_colunas
   IDX-07:
     etapa: 3
-    testes: []
+    testes: 
+      - test_golden.py::test_indice_fisico_em_tres_colunas
+      - test_golden.py::test_indice_sem_link_e_rejeitado
   SET-01:
     etapa: 3
-    testes: []
+    testes: 
+      - test_plano.py::test_com_setlist_frente_e_set_list_depois_indice
   SET-02:
     etapa: 2
     testes: 
@@ -209,10 +215,14 @@ regras:
       - test_html.py::test_setlist_em_texto_real_com_links
   SET-04:
     etapa: 3
-    testes: []
+    testes: 
+      - test_golden.py::test_12_destino_interno_errado_e_rejeitado
+      - test_plano.py::test_ocorrencia_aponta_para_a_propria_pagina
   SET-05:
     etapa: 3
-    testes: []
+    testes: 
+      - test_golden.py::test_08_repeticao_multipagina
+      - test_plano.py::test_ocorrencia_aponta_para_a_propria_pagina
   SET-06:
     etapa: 2
     testes: 
@@ -230,25 +240,35 @@ regras:
   SET-09:
     etapa: 3
     testes: 
+      - test_golden.py::test_10_musica_sem_partitura
       - test_html.py::test_setlist_sem_partitura_fica_visivel_sem_link
+      - test_plano.py::test_musica_sem_partitura_nao_cria_pagina
       - test_setlist_texto.py::test_musica_sem_partitura_fica_sem_grupo
   PRES-01:
     etapa: 3
-    testes: []
+    testes: 
+      - test_golden.py::test_09_setlist_reduzido_preserva_os_demais
+      - test_plano.py::test_todas_as_paginas_canonicas_aparecem
   PRES-02:
     etapa: 3
-    testes: []
+    testes: 
+      - test_golden.py::test_07_setlist_reordenado
+      - test_plano.py::test_preservadas_ao_final_na_ordem_canonica
   PRES-03:
     etapa: 3
-    testes: []
+    testes: 
+      - test_pdf.py::test_auxiliar_sem_retorno
+      - test_plano.py::test_auxiliar_preservada_uma_vez_depois_das_partituras
   PRES-04:
     etapa: 3
-    testes: []
+    testes: 
+      - test_plano.py::test_todas_as_paginas_canonicas_aparecem
   NOM-01:
     etapa: 2
     testes: 
       - test_nomes.py::test_aceita_diferencas_inequivocas
       - test_nomes.py::test_igualdade_normalizada_vence
+      - test_nomes.py::test_inclusao_so_por_palavras_inteiras
   NOM-02:
     etapa: 2
     testes: 
@@ -256,6 +276,7 @@ regras:
   NOM-03:
     etapa: 2
     testes: 
+      - test_nomes.py::test_aproximacao_fraca_pede_confirmacao
       - test_nomes.py::test_diferenca_menor_que_008_e_ambigua
   NOM-04:
     etapa: 2
@@ -286,22 +307,29 @@ regras:
       - test_versoes.py::test_nunca_sobrescreve_pdf
   PDF-05:
     etapa: 3
-    testes: []
+    testes: 
+      - test_golden.py::test_cenarios_sequenciais
   PDF-06:
     etapa: 3
-    testes: []
+    testes: 
+      - test_golden.py::test_conversor_gera_uma_pagina_por_slide
   PDF-07:
     etapa: 3
-    testes: []
+    testes: 
+      - test_golden.py::test_pdf_cru_nao_sobra
   PDF-08:
     etapa: 3
-    testes: []
+    testes: 
+      - test_golden.py::test_07_setlist_reordenado
+      - test_golden.py::test_08_repeticao_multipagina
   PDF-09:
     etapa: 3
-    testes: []
+    testes: 
+      - test_golden.py::test_plano_igual_na_geracao_e_no_gate
   PDF-10:
     etapa: 3
-    testes: []
+    testes: 
+      - test_golden.py::test_falha_no_gate_descarta_candidato
   PDF-11:
     etapa: 4
     testes: []
@@ -310,37 +338,53 @@ regras:
     testes: []
   LNK-01:
     etapa: 3
-    testes: []
+    testes: 
+      - test_golden.py::test_retorno_ausente_e_rejeitado
+      - test_pdf.py::test_retornos_sao_goto_para_a_pagina_1
+      - test_pdf.py::test_sem_setlist_retornos_vao_para_o_indice
   LNK-02:
     etapa: 3
-    testes: []
+    testes: 
+      - test_pdf.py::test_retornos_sao_goto_para_a_pagina_1
   LNK-03:
     etapa: 3
-    testes: []
+    testes: 
+      - test_pdf.py::test_caixa_padrao_sem_texto
+      - test_pdf.py::test_retorno_segue_o_texto_quando_ha_texto
   LNK-04:
     etapa: 3
-    testes: []
+    testes: 
+      - test_pdf.py::test_auxiliar_sem_retorno
   LNK-05:
     etapa: 3
-    testes: []
+    testes: 
+      - test_golden.py::test_11_link_externo_e_rejeitado
   LNK-06:
     etapa: 3
-    testes: []
+    testes: 
+      - test_golden.py::test_12_destino_interno_errado_e_rejeitado
   LNK-07:
     etapa: 3
-    testes: []
+    testes: 
+      - test_golden.py::test_link_que_cobre_pouco_do_texto_e_rejeitado
   LNK-08:
     etapa: 3
-    testes: []
+    testes: 
+      - test_golden.py::test_indice_sem_link_e_rejeitado
   VAL-01:
     etapa: 3
-    testes: []
+    testes: 
+      - test_golden.py::test_falha_no_gate_descarta_candidato
+      - test_golden.py::test_plano_igual_na_geracao_e_no_gate
   VAL-02:
     etapa: 3
-    testes: []
+    testes: 
+      - test_golden.py::test_paginas_a_mais_reprovam
+      - test_golden.py::test_retorno_ausente_e_rejeitado
   VAL-03:
     etapa: 3
-    testes: []
+    testes: 
+      - test_golden.py::test_indice_sem_link_e_rejeitado
   VAL-04:
     etapa: 4
     testes: []
@@ -355,7 +399,10 @@ regras:
       - test_html.py::test_validacao_detecta_pagina_sem_abc
   VAL-07:
     etapa: 3
-    testes: []
+    testes: 
+      - test_golden.py::test_paginas_a_mais_reprovam
+      - test_golden.py::test_pdf_corrompido_reprova
+      - test_plano.py::test_sem_indice_bloqueia
   VAL-08:
     etapa: 4
     testes: []
@@ -473,7 +520,8 @@ regras:
     testes: []
   REL-06:
     etapa: 3
-    testes: []
+    testes: 
+      - test_plano.py::test_relatorio_pre_geracao
   REL-01:
     etapa: 5
     testes: []
@@ -491,10 +539,14 @@ regras:
     testes: []
   TST-01:
     etapa: 3
-    testes: []
+    testes: 
+      - test_golden.py::test_cenarios_sequenciais
   TST-02:
-    etapa: 3
-    testes: []
+    etapa: 4
+    testes: 
+      - test_golden.py::test_07_setlist_reordenado
+      - test_golden.py::test_11_link_externo_e_rejeitado
+      - test_golden.py::test_cenarios_sequenciais
   TST-03:
     etapa: 4
     testes: []

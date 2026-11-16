@@ -111,9 +111,24 @@ def test_multipagina_conta_uma_vez():
     assert c.segundo.chave == "simmer-down"
 
 
+def test_aproximacao_fraca_pede_confirmacao():
+    """NOM-03: entre 0,68 e 0,80 não se sabe se é a música ou uma ausente."""
+    assert 0.68 <= similaridade("Mixolidio", "Lidio") < 0.80
+    with pytest.raises(Ambiguidade):
+        corresponder("Mixolidio", [Candidato("lidio", "Lidio")])
+
+
 def test_aproximacao_inequivoca_nao_interrompe():
     """FLX-06: só ambiguidade, inconsistência ou bloqueio param o processamento."""
     c = corresponder("Jamaica  Ska.", SKARAVANA)
     assert c.situacao is Situacao.EXATA
     c = corresponder("Jamaika Ska", SKARAVANA)
     assert c.situacao is Situacao.APROXIMADA
+
+
+def test_inclusao_so_por_palavras_inteiras():
+    """ "Lidio" não é abreviação de "Mixolidio"; "Reburial" é de "The Reburial"."""
+    assert similaridade("Reburial", "The Reburial") == 0.92
+    assert similaridade("Mixolidio", "Lidio") < 0.92
+    with pytest.raises(Ambiguidade, match="Confirme"):
+        corresponder("Mixolidio", [Candidato("lidio", "Lidio"), Candidato("jonia", "Jonia")])
