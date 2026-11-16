@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.pytest_cache/
+.ruff_cache/
+build/
+dist/
+
+# Saídas locais de execução e testes: nunca versionar PDFs nem renders.
+saidas/
+*.candidate.pdf
+*.candidate.html
+renders/

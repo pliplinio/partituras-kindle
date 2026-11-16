@@ -1,0 +1,447 @@
+# Matriz regra -> teste.
+# etapa: etapa do plano em que a regra precisa ter pelo menos um teste.
+# testes: lista de 'arquivo::funcao' (pytest node id relativo a tests/).
+# O CI falha se uma regra de REGRAS.md faltar aqui, se houver regra a mais,
+# ou se uma regra com etapa <= ETAPA_ATUAL estiver sem teste.
+
+etapa_atual: 1
+
+regras:
+  ARQ-01:
+    etapa: 5
+    testes: []
+  ARQ-02:
+    etapa: 5
+    testes: []
+  ARQ-03:
+    etapa: 2
+    testes: []
+  ARQ-04:
+    etapa: 5
+    testes: []
+  ARQ-05:
+    etapa: 5
+    testes: []
+  HTML-01:
+    etapa: 2
+    testes: []
+  HTML-02:
+    etapa: 2
+    testes: []
+  HTML-03:
+    etapa: 2
+    testes: []
+  HTML-04:
+    etapa: 2
+    testes: []
+  HTML-05:
+    etapa: 2
+    testes: []
+  HTML-06:
+    etapa: 2
+    testes: []
+  HTML-07:
+    etapa: 2
+    testes: []
+  HTML-08:
+    etapa: 2
+    testes: []
+  HTML-09:
+    etapa: 2
+    testes: []
+  HTML-10:
+    etapa: 2
+    testes: []
+  EST-01:
+    etapa: 2
+    testes: []
+  EST-02:
+    etapa: 2
+    testes: []
+  EST-03:
+    etapa: 2
+    testes: []
+  EST-04:
+    etapa: 2
+    testes: []
+  EST-05:
+    etapa: 2
+    testes: []
+  EST-06:
+    etapa: 2
+    testes: []
+  MULTI-01:
+    etapa: 2
+    testes: []
+  MULTI-02:
+    etapa: 2
+    testes: []
+  MULTI-03:
+    etapa: 2
+    testes: []
+  MULTI-04:
+    etapa: 2
+    testes: []
+  MUS-01:
+    etapa: 2
+    testes: []
+  MUS-02:
+    etapa: 2
+    testes: []
+  MUS-03:
+    etapa: 2
+    testes: []
+  MUS-04:
+    etapa: 2
+    testes: []
+  MUS-05:
+    etapa: 2
+    testes: []
+  MUS-06:
+    etapa: 2
+    testes: []
+  MUS-07:
+    etapa: 2
+    testes: []
+  MUS-08:
+    etapa: 2
+    testes: []
+  LAY-01:
+    etapa: 2
+    testes: []
+  LAY-02:
+    etapa: 2
+    testes: []
+  LAY-03:
+    etapa: 2
+    testes: []
+  LAY-04:
+    etapa: 2
+    testes: []
+  LAY-05:
+    etapa: 6
+    testes: []
+  LAY-06:
+    etapa: 2
+    testes: []
+  LAY-07:
+    etapa: 6
+    testes: []
+  IDX-01:
+    etapa: 2
+    testes: []
+  IDX-02:
+    etapa: 2
+    testes: []
+  IDX-03:
+    etapa: 2
+    testes: []
+  IDX-04:
+    etapa: 2
+    testes: []
+  IDX-05:
+    etapa: 3
+    testes: []
+  IDX-06:
+    etapa: 3
+    testes: []
+  IDX-07:
+    etapa: 3
+    testes: []
+  SET-01:
+    etapa: 3
+    testes: []
+  SET-02:
+    etapa: 2
+    testes: []
+  SET-03:
+    etapa: 2
+    testes: []
+  SET-04:
+    etapa: 3
+    testes: []
+  SET-05:
+    etapa: 3
+    testes: []
+  SET-06:
+    etapa: 2
+    testes: []
+  SET-07:
+    etapa: 2
+    testes: []
+  SET-08:
+    etapa: 2
+    testes: []
+  SET-09:
+    etapa: 3
+    testes: []
+  PRES-01:
+    etapa: 3
+    testes: []
+  PRES-02:
+    etapa: 3
+    testes: []
+  PRES-03:
+    etapa: 3
+    testes: []
+  PRES-04:
+    etapa: 3
+    testes: []
+  NOM-01:
+    etapa: 2
+    testes: []
+  NOM-02:
+    etapa: 2
+    testes: []
+  NOM-03:
+    etapa: 2
+    testes: []
+  NOM-04:
+    etapa: 2
+    testes: []
+  NOM-05:
+    etapa: 2
+    testes: []
+  PDF-01:
+    etapa: 2
+    testes: []
+  PDF-02:
+    etapa: 2
+    testes: []
+  PDF-03:
+    etapa: 2
+    testes: []
+  PDF-04:
+    etapa: 2
+    testes: []
+  PDF-05:
+    etapa: 3
+    testes: []
+  PDF-06:
+    etapa: 3
+    testes: []
+  PDF-07:
+    etapa: 3
+    testes: []
+  PDF-08:
+    etapa: 3
+    testes: []
+  PDF-09:
+    etapa: 3
+    testes: []
+  PDF-10:
+    etapa: 3
+    testes: []
+  PDF-11:
+    etapa: 4
+    testes: []
+  PDF-12:
+    etapa: 4
+    testes: []
+  LNK-01:
+    etapa: 3
+    testes: []
+  LNK-02:
+    etapa: 3
+    testes: []
+  LNK-03:
+    etapa: 3
+    testes: []
+  LNK-04:
+    etapa: 3
+    testes: []
+  LNK-05:
+    etapa: 3
+    testes: []
+  LNK-06:
+    etapa: 3
+    testes: []
+  LNK-07:
+    etapa: 3
+    testes: []
+  LNK-08:
+    etapa: 3
+    testes: []
+  VAL-01:
+    etapa: 3
+    testes: []
+  VAL-02:
+    etapa: 3
+    testes: []
+  VAL-03:
+    etapa: 3
+    testes: []
+  VAL-04:
+    etapa: 4
+    testes: []
+  VAL-05:
+    etapa: 4
+    testes: []
+  VAL-06:
+    etapa: 2
+    testes: []
+  VAL-07:
+    etapa: 3
+    testes: []
+  VAL-08:
+    etapa: 4
+    testes: []
+  INS-01:
+    etapa: 4
+    testes: []
+  INS-02:
+    etapa: 4
+    testes: []
+  INS-03:
+    etapa: 4
+    testes: []
+  INS-04:
+    etapa: 4
+    testes: []
+  INS-05:
+    etapa: 4
+    testes: []
+  INS-06:
+    etapa: 4
+    testes: []
+  INS-07:
+    etapa: 4
+    testes: []
+  INS-09:
+    etapa: 4
+    testes: []
+  INS-08:
+    etapa: 4
+    testes: []
+  PRO-01:
+    etapa: 5
+    testes: []
+  PRO-02:
+    etapa: 5
+    testes: []
+  PRO-03:
+    etapa: 5
+    testes: []
+  PRO-04:
+    etapa: 5
+    testes: []
+  PRO-06:
+    etapa: 5
+    testes: []
+  PRO-05:
+    etapa: 5
+    testes: []
+  KIN-01:
+    etapa: 5
+    testes: []
+  KIN-02:
+    etapa: 5
+    testes: []
+  KIN-03:
+    etapa: 5
+    testes: []
+  KIN-04:
+    etapa: 5
+    testes: []
+  KIN-05:
+    etapa: 5
+    testes: []
+  KIN-06:
+    etapa: 5
+    testes: []
+  FLX-01:
+    etapa: 5
+    testes: []
+  FLX-02:
+    etapa: 5
+    testes: []
+  FLX-03:
+    etapa: 4
+    testes: []
+  FLX-04:
+    etapa: 4
+    testes: []
+  FLX-05:
+    etapa: 4
+    testes: []
+  FLX-06:
+    etapa: 2
+    testes: []
+  TMP-01:
+    etapa: 5
+    testes: []
+  TMP-02:
+    etapa: 5
+    testes: []
+  TMP-03:
+    etapa: 5
+    testes: []
+  TMP-04:
+    etapa: 5
+    testes: []
+  TMP-05:
+    etapa: 5
+    testes: []
+  TMP-06:
+    etapa: 5
+    testes: []
+  TMP-07:
+    etapa: 5
+    testes: []
+  HIS-01:
+    etapa: 5
+    testes: []
+  HIS-02:
+    etapa: 5
+    testes: []
+  HIS-03:
+    etapa: 5
+    testes: []
+  REL-06:
+    etapa: 3
+    testes: []
+  REL-01:
+    etapa: 5
+    testes: []
+  REL-02:
+    etapa: 5
+    testes: []
+  REL-03:
+    etapa: 5
+    testes: []
+  REL-04:
+    etapa: 5
+    testes: []
+  REL-05:
+    etapa: 5
+    testes: []
+  TST-01:
+    etapa: 3
+    testes: []
+  TST-02:
+    etapa: 3
+    testes: []
+  TST-03:
+    etapa: 4
+    testes: []
+  TST-04:
+    etapa: 4
+    testes: []
+  TST-05:
+    etapa: 1
+    testes: 
+      - test_matriz_regras.py::test_regras_e_matriz_coincidem
+      - test_matriz_regras.py::test_regras_da_etapa_atual_tem_testes
+      - test_matriz_regras.py::test_testes_citados_existem
+  VER-01:
+    etapa: 1
+    testes: 
+      - test_cli.py::test_version
+  VER-02:
+    etapa: 1
+    testes: 
+      - test_projeto.py::test_changelog_tem_versao_atual
+  VER-03:
+    etapa: 1
+    testes: 
+      - test_projeto.py::test_versao_codigo_independente
