@@ -3,6 +3,31 @@
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/);
 versões seguem [SemVer](https://semver.org/lang/pt-BR/).
 
+## [0.5.0] - 2026-11-16
+
+Etapa 5: execução completa, promoção, Kindle, histórico e relatório.
+
+### Adicionado
+
+- `dominio/tempo.py`: cronômetro iniciado antes da primeira leitura do Drive, persistido entre
+  passos, total por relógio, etapas e contadores (TMP-01 a TMP-07).
+- `dominio/execucao.py`: plano congelado a partir de uma única listagem, com o PDF aprovado
+  anterior e o seu manifesto; barra a pasta da versão ChatGPT e HTML sem versão de template.
+- `casos_de_uso/promover.py`: grava HTML, PDF e manifesto na ordem de PRO-03, conferindo o
+  SHA-256 a cada passo e restaurando o HTML se o PDF falhar (PRO-04).
+- `dominio/kindle.py`: caminho de envio pelo tamanho do PDF, registro das tentativas, bloqueio
+  só depois de tentar todos os caminhos e lista de versões antigas para limpeza (KIN-01 a KIN-06).
+- `adaptadores/pasta_local.py` e `adaptadores/historico.py`: pasta operacional em bytes e
+  histórico JSONL só com acréscimos, sem segredos.
+- `dominio/relatorio.py`: relatório na ordem de REL-02 e três estados finais.
+- `casos_de_uso/executar.py` e CLI com os passos `iniciar`, `preparar`, `gerar`, `substituir`,
+  `aprovar`, `promover`, `kindle` e `finalizar`.
+
+### Alterado
+
+- REL-04 (pendente de aprovação): `ENVIO AO KINDLE: NAO_SOLICITADO` no processamento sem envio
+  pedido explicitamente.
+
 ## [0.4.0] - 2026-11-15
 
 Etapa 4: reaproveitamento de inspeção e troca rápida de música.

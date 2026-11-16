@@ -14,6 +14,8 @@ from pathlib import Path
 import pymupdf
 import pytest
 
+from partituras import cli
+from partituras.casos_de_uso import executar
 from partituras.casos_de_uso.gerar_pdf import gerar_candidato
 from partituras.casos_de_uso.substituir_musica import Anterior, substituir
 from partituras.dominio.erros import Ambiguidade, Bloqueio, Inconsistencia
@@ -405,3 +407,82 @@ def test_folhas_de_contato_ate_6(pdf_04, tmp_path):
     assert len(renders) == 8 and len(folhas) == 2
     with pytest.raises(ValueError):
         folhas_de_contato(renders, tmp_path, por_folha=7)
+
+
+# --- Etapa 5: execução completa pelo CLI ----------------------------------------------------
+
+
+def _cli(*args) -> int:
+    return cli.main([str(a) for a in args])
+
+
+def test_fluxo_completo_pelo_cli(estados, tmp_path, capsys):
+    """FLX-01, PRO-03, KIN-05, HIS-01, REL-01: duas execuções seguidas na mesma pasta."""
+    pasta = tmp_path / "partituras_claude"
+    pasta.mkdir()
+    (pasta / "Fanfateste.html").write_bytes(estados["04_Lidio"].para_bytes())
+
+    t1 = tmp_path / "exec1"
+    assert _cli("iniciar", "--trabalho", t1) == 0
+    assert _cli("preparar", "--trabalho", t1, "--pasta", pasta, "--fanfarra", "Fanfateste") == 0
+    assert _cli("gerar", "--trabalho", t1) == 0
+    estado = executar.Estado.abrir(t1)
+    assert estado.dados["paginas_para_inspecao"] == list(range(1, 9))  # sem anterior: integral
+    assert _cli("promover", "--trabalho", t1, "--pasta", pasta) == 2  # sem inspeção, nada grava
+    assert not (pasta / "Fanfateste_v02.pdf").exists()
+    assert _cli("aprovar", "--trabalho", t1, "--inspecionadas", "1-8") == 0
+    assert _cli("promover", "--trabalho", t1, "--pasta", pasta) == 0
+    assert _cli("kindle", "--trabalho", t1, "--metodo", "gmail_conector_envio",
+                "--resultado", "sucesso") == 0  # fmt: skip
+    capsys.readouterr()
+    assert _cli("finalizar", "--trabalho", t1, "--pasta", pasta) == 0
+    relatorio = capsys.readouterr().out.strip().splitlines()
+    assert relatorio[-1] == "STATUS FINAL: SUCESSO"
+    assert (pasta / "Fanfateste_v02.pdf").is_file()
+    assert (pasta / "automacao/manifestos/Fanfateste_v02.manifest.json").is_file()
+
+    t2 = tmp_path / "exec2"
+    _cli("iniciar", "--trabalho", t2, "--sem-envio")
+    _cli("preparar", "--trabalho", t2, "--pasta", pasta, "--fanfarra", "Fanfateste")
+    assert _cli("substituir", "--trabalho", t2, "--pasta", pasta, "--musica", "Lidio",
+                "--imagens", ENTRADA / "Jonia.png") == 0  # fmt: skip
+    estado = executar.Estado.abrir(t2)
+    assert estado.dados["metodo_pdf"] == "incremental_pdf_patch"
+    assert len(estado.dados["paginas_para_inspecao"]) == 1
+    assert estado.cronometro.contadores["edicoes_html"] == 1
+    pagina = estado.dados["paginas_para_inspecao"][0]
+    _cli("aprovar", "--trabalho", t2, "--inspecionadas", pagina)
+    assert _cli("promover", "--trabalho", t2, "--pasta", pasta) == 0
+    capsys.readouterr()
+    _cli("finalizar", "--trabalho", t2, "--pasta", pasta)
+    assert capsys.readouterr().out.strip().splitlines()[-2:] == [
+        "ENVIO AO KINDLE: NAO_SOLICITADO",
+        "STATUS FINAL: SUCESSO",
+    ]
+    assert (pasta / "Fanfateste_v03.pdf").is_file()
+    historico = (pasta / "automacao/historico_execucoes.jsonl").read_text().splitlines()
+    assert len(historico) == 2
+    assert len(list((pasta / "automacao/relatorios").iterdir())) == 2
+
+
+def test_inspecao_reprovada_nao_promove(estados, tmp_path, capsys):
+    """INS-07, PRO-01: achado na inspeção encerra com falha e sem gravar nada."""
+    pasta = tmp_path / "partituras_claude"
+    pasta.mkdir()
+    (pasta / "Fanfateste.html").write_bytes(estados["04_Lidio"].para_bytes())
+    t = tmp_path / "exec"
+    _cli("iniciar", "--trabalho", t)
+    _cli("preparar", "--trabalho", t, "--pasta", pasta, "--fanfarra", "Fanfateste")
+    _cli("gerar", "--trabalho", t)
+    assert _cli("aprovar", "--trabalho", t, "--inspecionadas", "1-8",
+                "--achado", "4:partitura cortada") == 2  # fmt: skip
+    assert _cli("promover", "--trabalho", t, "--pasta", pasta) == 2
+    capsys.readouterr()
+    _cli("finalizar", "--trabalho", t, "--pasta", pasta)
+    saida = capsys.readouterr().out.strip().splitlines()
+    assert saida[-3:] == [
+        "PROCESSAMENTO DO PDF: FALHA",
+        "ENVIO AO KINDLE: FALHA",
+        "STATUS FINAL: FALHA",
+    ]
+    assert sorted(p.name for p in pasta.iterdir()) == ["Fanfateste.html", "automacao"]

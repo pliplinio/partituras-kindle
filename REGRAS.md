@@ -205,7 +205,7 @@ Para mudar uma regra: altere este arquivo, a matriz e os testes no mesmo PR.
 - [REL-01] Toda execução termina com relatório final explícito na resposta, inclusive em falha ou bloqueio, também salvo em `automacao`.
 - [REL-02] O relatório começa pelo tempo e segue o formato: tempo percebido pelo usuário, tempo do atendimento, início/fim, tempo do núcleo, fanfarra/música, HTML, PDF, SHA-256, imagens, páginas/preservação/sequência, set list/índice/retornos, fingerprint/inspeção, Drive/Kindle, tempos por etapa, pendências.
 - [REL-03] Sem timestamp do pedido, a primeira linha diz que o tempo é medido desde o início do atendimento.
-- [REL-04] O relatório termina exatamente com `PROCESSAMENTO DO PDF: SUCESSO|FALHA`, `ENVIO AO KINDLE: SUCESSO|FALHA|BLOQUEADO` e `STATUS FINAL: SUCESSO|FALHA`.
+- [REL-04] **(pendente)** O relatório termina exatamente com `PROCESSAMENTO DO PDF: SUCESSO|FALHA`, `ENVIO AO KINDLE: SUCESSO|FALHA|BLOQUEADO|NAO_SOLICITADO` e `STATUS FINAL: SUCESSO|FALHA`. `NAO_SOLICITADO` só no processamento sem envio pedido explicitamente (KIN-01).
 - [REL-05] `STATUS FINAL: SUCESSO` somente quando todas as etapas obrigatórias, inclusive o gate de tempo, foram concluídas.
 
 ## TST — Testes de regressão

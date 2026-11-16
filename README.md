@@ -58,3 +58,21 @@ PARTITURAS_HTML_REAIS="G:/Meu Drive/Tuba/partituras_claude" pytest tests/test_ht
 
 `etapa_atual` em `tests/matriz_regras.yaml` acompanha esta tabela: ao avançar,
 todas as regras das etapas concluídas precisam ter teste.
+
+## Uma execução, passo a passo
+
+O estado fica num diretório de trabalho local; só `promover` e `finalizar` gravam na pasta
+operacional. A inspeção visual e o envio ao Kindle acontecem fora do código e são registrados
+pelos passos `aprovar` e `kindle`.
+
+```
+partituras iniciar    --trabalho T [--pedido 2026-11-16T01:40:00-03:00] [--sem-envio]
+partituras preparar   --trabalho T --pasta P --fanfarra Skaravana --versao-minima 14
+partituras gerar      --trabalho T [--setlist setlist.txt]
+partituras substituir --trabalho T --pasta P --musica "Simmer Down" --imagens nova.png
+partituras aprovar    --trabalho T --inspecionadas 4-5 [--achado 5:descrição]
+partituras promover   --trabalho T --pasta P
+partituras kindle     --trabalho T --metodo gmail_navegador_anexo_drive --resultado sucesso
+partituras finalizar  --trabalho T --pasta P
+```
+

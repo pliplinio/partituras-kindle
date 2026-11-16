@@ -68,3 +68,11 @@ def test_camadas_respeitam_dependencias(camada: str):
     for arquivo in pasta.rglob("*.py"):
         proibidas = _imports_internos(arquivo) - DEPENDENCIAS_PERMITIDAS[camada] - {camada}
         assert not proibidas, f"{arquivo.relative_to(RAIZ)} importa camadas proibidas: {proibidas}"
+
+
+def test_codigo_vive_so_no_repositorio():
+    """ARQ-02: nenhum código lê ou executa script guardado no Drive."""
+    for arquivo in PACOTE.rglob("*.py"):
+        texto = arquivo.read_text(encoding="utf-8")
+        assert "organizador_partituras_kindle" not in texto, arquivo
+        assert "exec(" not in texto and "importlib" not in texto, arquivo
