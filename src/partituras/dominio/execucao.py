@@ -101,7 +101,6 @@ def planejar_execucao(
     ler: Callable[[str], bytes],
     local: str,
     versao_template_de: Callable[[bytes], int],
-    versao_minima: int = 0,
 ) -> PlanoExecucao:
     """Monta o plano a partir de uma única listagem (FLX-01).
 
@@ -126,7 +125,7 @@ def planejar_execucao(
     manifestos = set(nomes)
     aprovados = [p for p in pdfs if manifesto_de(p) in manifestos]
     anterior = aprovados[-1] if aprovados else None
-    versao = proxima_versao_pdf(fanfarra, versao_template, raiz, versao_minima)
+    versao = proxima_versao_pdf(fanfarra, raiz)
     final = nome_pdf(fanfarra, versao)
     garantir_nao_sobrescreve(final, raiz)
     return PlanoExecucao(

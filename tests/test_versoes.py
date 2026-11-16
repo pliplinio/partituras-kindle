@@ -54,21 +54,20 @@ def test_nome_do_pdf():
         nome_pdf("Xamego", 0)
 
 
-def test_proxima_versao_considera_template_pdfs_e_minima():
-    """PDF-02."""
-    assert proxima_versao_pdf("Skaravana", 6, []) == 7
-    assert proxima_versao_pdf("Skaravana", 6, ["Skaravana_v13.pdf", "Skaravana_v09.pdf"]) == 14
-    assert proxima_versao_pdf("Skaravana", 6, ["Xamego_v40.pdf", "Skaravana.html"]) == 7
+def test_proxima_versao_conta_so_pdfs_existentes():
+    """PDF-02: a versão de template não entra na conta."""
+    assert proxima_versao_pdf("Skaravana", ["Skaravana_v13.pdf", "Skaravana_v09.pdf"]) == 14
+    assert proxima_versao_pdf("Skaravana", ["Xamego_v40.pdf", "Skaravana.html"]) == 1
 
 
-def test_versao_minima_continua_a_numeracao_antiga():
-    """PDF-03: o próximo Skaravana é v15, depois do v14 da versão ChatGPT."""
-    assert proxima_versao_pdf("Skaravana", 6, [], versao_minima=14) == 15
+def test_numeracao_propria_recomeca_em_v01():
+    """PDF-03: sem PDF na pasta da versão Claude, o primeiro é v01."""
+    assert nome_pdf("Skaravana", proxima_versao_pdf("Skaravana", [])) == "Skaravana_v01.pdf"
 
 
 def test_colisao_usa_proxima_livre():
-    assert proxima_versao_pdf("Skaravana", 6, ["Skaravana_v7.pdf"]) == 8
-    assert proxima_versao_pdf("Skaravana", 9, ["skaravana_v10.PDF"]) == 11
+    assert proxima_versao_pdf("Skaravana", ["Skaravana_v7.pdf"]) == 8
+    assert proxima_versao_pdf("Skaravana", ["skaravana_v10.PDF"]) == 11
 
 
 def test_nunca_sobrescreve_pdf():

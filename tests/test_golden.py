@@ -429,7 +429,7 @@ def test_fluxo_completo_pelo_cli(estados, tmp_path, capsys):
     estado = executar.Estado.abrir(t1)
     assert estado.dados["paginas_para_inspecao"] == list(range(1, 9))  # sem anterior: integral
     assert _cli("promover", "--trabalho", t1, "--pasta", pasta) == 2  # sem inspeção, nada grava
-    assert not (pasta / "Fanfateste_v02.pdf").exists()
+    assert not (pasta / "Fanfateste_v01.pdf").exists()
     assert _cli("aprovar", "--trabalho", t1, "--inspecionadas", "1-8") == 0
     assert _cli("promover", "--trabalho", t1, "--pasta", pasta) == 0
     assert _cli("kindle", "--trabalho", t1, "--metodo", "gmail_conector_envio",
@@ -438,8 +438,8 @@ def test_fluxo_completo_pelo_cli(estados, tmp_path, capsys):
     assert _cli("finalizar", "--trabalho", t1, "--pasta", pasta) == 0
     relatorio = capsys.readouterr().out.strip().splitlines()
     assert relatorio[-1] == "STATUS FINAL: SUCESSO"
-    assert (pasta / "Fanfateste_v02.pdf").is_file()
-    assert (pasta / "automacao/manifestos/Fanfateste_v02.manifest.json").is_file()
+    assert (pasta / "Fanfateste_v01.pdf").is_file()
+    assert (pasta / "automacao/manifestos/Fanfateste_v01.manifest.json").is_file()
 
     t2 = tmp_path / "exec2"
     _cli("iniciar", "--trabalho", t2, "--sem-envio")
@@ -459,7 +459,7 @@ def test_fluxo_completo_pelo_cli(estados, tmp_path, capsys):
         "ENVIO AO KINDLE: NAO_SOLICITADO",
         "STATUS FINAL: SUCESSO",
     ]
-    assert (pasta / "Fanfateste_v03.pdf").is_file()
+    assert (pasta / "Fanfateste_v02.pdf").is_file()
     historico = (pasta / "automacao/historico_execucoes.jsonl").read_text().splitlines()
     assert len(historico) == 2
     assert len(list((pasta / "automacao/relatorios").iterdir())) == 2

@@ -95,15 +95,20 @@ class Envio:
         }
 
 
-def versoes_antigas(fanfarra: str, titulos: list[str], versao_atual: int) -> list[str]:
-    """Documentos da mesma fanfarra com versão menor que a enviada (KIN-06).
+def versoes_antigas(fanfarra: str, titulos: list[str], enviado: str) -> list[str]:
+    """Outros documentos versionados da mesma fanfarra, além do recém-enviado (KIN-06).
 
-    A lista só sugere; a exclusão exige confirmação do usuário.
+    Como a numeração da versão Claude recomeçou (PDF-03), um documento antigo pode
+    ter número maior que o novo; por isso não se compara versão. A lista só
+    sugere; a exclusão exige confirmação do usuário.
     """
+    atual = enviado.removesuffix(".pdf").casefold()
     antigas = []
     for titulo in titulos:
         nome = titulo if titulo.lower().endswith(".pdf") else f"{titulo}.pdf"
-        versao = versao_do_pdf(nome, fanfarra)
-        if versao is not None and versao < versao_atual:
+        if (
+            versao_do_pdf(nome, fanfarra) is not None
+            and titulo.removesuffix(".pdf").casefold() != atual
+        ):
             antigas.append(titulo)
     return antigas

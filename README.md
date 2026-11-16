@@ -67,7 +67,7 @@ pelos passos `aprovar` e `kindle`.
 
 ```
 partituras iniciar    --trabalho T [--pedido 2026-11-16T01:40:00-03:00] [--sem-envio]
-partituras preparar   --trabalho T --pasta P --fanfarra Skaravana --versao-minima 14
+partituras preparar   --trabalho T --pasta P --fanfarra Skaravana
 partituras gerar      --trabalho T [--setlist setlist.txt]
 partituras substituir --trabalho T --pasta P --musica "Simmer Down" --imagens nova.png
 partituras aprovar    --trabalho T --inspecionadas 4-5 [--achado 5:descrição]
