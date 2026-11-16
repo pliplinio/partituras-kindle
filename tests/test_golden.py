@@ -1,8 +1,7 @@
 """Laboratório de regressão da Fanfateste (TST-01, TST-02).
 
 Executa o código produtivo do HTML ao PDF, sem Drive, Gmail nem Kindle.
-Cenários 1 a 4 são sequenciais; 7 a 12 partem do estado do cenário 4.
-Os cenários 5 e 6 (substituição rápida) entram na etapa 4.
+Cenários 1 a 4 são sequenciais; 5 a 12 partem do estado do cenário 4.
 
 Requer o Chromium do Playwright (`python -m playwright install chromium`).
 """
@@ -16,9 +15,11 @@ import pymupdf
 import pytest
 
 from partituras.casos_de_uso.gerar_pdf import gerar_candidato
-from partituras.dominio.erros import Ambiguidade, Inconsistencia
+from partituras.casos_de_uso.substituir_musica import Anterior, substituir
+from partituras.dominio.erros import Ambiguidade, Bloqueio, Inconsistencia
 from partituras.dominio.modelos import Papel
 from partituras.dominio.plano import planejar
+from partituras.html import escopo
 from partituras.html.documento import Documento
 from partituras.html.edicao import (
     PedidoMusica,
@@ -27,6 +28,8 @@ from partituras.html.edicao import (
     reconstruir_setlist,
 )
 from partituras.pdf import gate
+from partituras.pdf.fingerprint import delta, manifesto
+from partituras.pdf.inspecao import folhas_de_contato, pre_validar, registrar_inspecao, renderizar
 
 pytestmark = pytest.mark.chromium
 
@@ -290,3 +293,115 @@ def test_plano_igual_na_geracao_e_no_gate(estados):
     b = planejar(Documento.de_bytes(doc.para_bytes()).repertorio())
     assert a.paginas == b.paginas and a.setlist == b.setlist and a.indice == b.indice
     assert [p.papel for p in a.paginas[:2]] == [Papel.SETLIST, Papel.INDICE]
+
+
+# --- Cenários 5 e 6: substituição rápida (etapa 4) -------------------------------------------
+
+
+def _anterior(pdf_04) -> Anterior:
+    return Anterior(sha256=pdf_04.sha256, pdf=pdf_04.candidato)
+
+
+def test_05_substituicao_rapida_uma_pagina(estados, pdf_04, tmp_path):
+    """PDF-11, VAL-05, FLX-03: patch incremental, gate nominal e inspeção só da música."""
+    pedido = PedidoMusica("Fanfateste", "Lidio", (ENTRADA / "Jonia.png",))
+    r = substituir(estados["04_Lidio"].para_bytes(), pedido, tmp_path, "05.pdf", _anterior(pdf_04))
+    assert r.metodo == "incremental_pdf_patch" and r.motivo_integral is None
+    assert r.nominal["presenca_ok"] and r.nominal["partes_encontradas"] == [1]
+    lidio = [p.pagina + 1 for p in pdf_04.plano.paginas_partitura if p.grupo == "lidio"]
+    assert sorted(r.delta.para_inspecao) == lidio
+    assert len(r.delta.reutilizaveis) == 7
+    assert [p.name for p in r.renders] == [f"pagina-{lidio[0]:03d}.png"]
+
+
+def test_06_substituicao_rapida_multipagina(estados, pdf_04, tmp_path):
+    """PDF-11 em música de 2 partes."""
+    imagens = (ENTRADA / "Frigia (1 de 2).png", ENTRADA / "Frigia (2 de 2).png")
+    pedido = PedidoMusica("Fanfateste", "Doria", imagens)
+    r = substituir(estados["04_Lidio"].para_bytes(), pedido, tmp_path, "06.pdf", _anterior(pdf_04))
+    assert r.metodo == "incremental_pdf_patch"
+    assert r.nominal["partes_encontradas"] == [1, 2]
+    assert sorted(r.delta.para_inspecao) == [4, 5]
+
+
+def test_mudanca_de_partes_cai_para_geracao_integral(estados, pdf_04, tmp_path):
+    """PDF-12: o motivo do fallback fica registrado."""
+    pedido = PedidoMusica(
+        "Fanfateste", "Lidio", (ENTRADA / "Doria (1 de 2).png", ENTRADA / "Lidio.png")
+    )
+    r = substituir(estados["04_Lidio"].para_bytes(), pedido, tmp_path, "x.pdf", _anterior(pdf_04))
+    assert r.metodo == "geracao_integral"
+    assert "páginas" in r.motivo_integral
+    assert r.nominal["partes_encontradas"] == [1, 2]
+
+
+def test_patch_exige_sha_aprovado(estados, pdf_04, tmp_path):
+    """PDF-11: o PDF anterior precisa ter o SHA-256 aprovado."""
+    pedido = PedidoMusica("Fanfateste", "Lidio", (ENTRADA / "Jonia.png",))
+    with pytest.raises(Bloqueio):
+        substituir(
+            estados["04_Lidio"].para_bytes(),
+            pedido,
+            tmp_path,
+            "y.pdf",
+            Anterior("0" * 64, pdf=pdf_04.candidato),
+        )
+    assert not (tmp_path / "y.candidate.pdf").exists()
+
+
+def test_patch_preserva_links_das_outras_paginas(estados, pdf_04, tmp_path):
+    """Links compartilhados entre páginas não podem sumir com o patch."""
+    pedido = PedidoMusica("Fanfateste", "Lidio", (ENTRADA / "Jonia.png",))
+    r = substituir(estados["04_Lidio"].para_bytes(), pedido, tmp_path, "z.pdf", _anterior(pdf_04))
+    with pymupdf.open(r.candidato) as doc, pymupdf.open(pdf_04.candidato) as antes:
+        assert [len(p.get_links()) for p in doc] == [len(p.get_links()) for p in antes]
+
+
+def test_mesmo_pdf_reaproveita_tudo(pdf_04):
+    """FLX-05: mesmo SHA-256 (só mudou o nome) não pede renderização."""
+    m = manifesto(pdf_04.candidato)
+    d = delta(m, m)
+    assert not d.para_inspecao and len(d.reutilizaveis) == 8
+
+
+def test_escopo_bloqueia_mudanca_fora_do_grupo(estados):
+    """VAL-04."""
+    antes = estados["04_Lidio"]
+    depois, _ = reconstruir_setlist(antes, ["Lidio", "Jonia"])
+    rel = escopo.verificar(antes, depois, "lidio")
+    assert "set list mudou (posições, títulos ou grupos)" in rel.violacoes
+    with pytest.raises(Inconsistencia, match="escopo"):
+        escopo.exigir(antes, depois, "lidio")
+
+
+def test_pre_validacao_sinaliza_pagina_vazia(pdf_04, tmp_path):
+    """VAL-08."""
+
+    def esvaziar(doc):
+        pagina = doc[2]
+        pagina.add_redact_annot(pagina.rect, fill=(1, 1, 1))
+        pagina.apply_redactions(images=pymupdf.PDF_REDACT_IMAGE_REMOVE)
+
+    pdf = _corromper(pdf_04.candidato, tmp_path / "v.pdf", esvaziar)
+    tipos = {(a.pagina, a.tipo) for a in pre_validar(pdf, pdf_04.plano)}
+    assert (3, "pagina_vazia") in tipos and (3, "imagem_ausente") in tipos
+    assert pre_validar(pdf_04.candidato, pdf_04.plano) == []
+
+
+def test_registro_de_inspecao_exige_todas_as_paginas(pdf_04):
+    """INS-06, INS-07: não se declara inspeção que não foi feita."""
+    d = delta(manifesto(pdf_04.candidato), None)
+    with pytest.raises(Bloqueio, match="faltam"):
+        registrar_inspecao(pdf_04.candidato, d, [1, 2, 3])
+    reg = registrar_inspecao(pdf_04.candidato, d, list(range(1, 9)))
+    assert reg.sha256 == pdf_04.sha256 and reg.aprovada
+    assert "cortes" in reg.checklist and "páginas ausentes" in reg.checklist
+
+
+def test_folhas_de_contato_ate_6(pdf_04, tmp_path):
+    """INS-05."""
+    renders = renderizar(pdf_04.candidato, range(1, 9), tmp_path)
+    folhas = folhas_de_contato(renders, tmp_path)
+    assert len(renders) == 8 and len(folhas) == 2
+    with pytest.raises(ValueError):
+        folhas_de_contato(renders, tmp_path, por_folha=7)
