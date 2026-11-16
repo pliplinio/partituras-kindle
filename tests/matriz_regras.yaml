@@ -301,11 +301,11 @@ regras:
     etapa: 2
     testes: 
       - test_versoes.py::test_colisao_usa_proxima_livre
-      - test_versoes.py::test_proxima_versao_considera_template_pdfs_e_minima
+      - test_versoes.py::test_proxima_versao_conta_so_pdfs_existentes
   PDF-03:
     etapa: 2
     testes: 
-      - test_versoes.py::test_versao_minima_continua_a_numeracao_antiga
+      - test_versoes.py::test_numeracao_propria_recomeca_em_v01
   PDF-04:
     etapa: 2
     testes: 

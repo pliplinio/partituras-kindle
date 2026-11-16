@@ -46,19 +46,14 @@ def versao_do_pdf(nome_arquivo: str, fanfarra: str) -> int | None:
     return int(m.group("versao"))
 
 
-def proxima_versao_pdf(
-    fanfarra: str,
-    versao_template: int,
-    arquivos_existentes: Iterable[str],
-    versao_minima: int = 0,
-) -> int:
-    """max(template, PDFs existentes, versão mínima) + 1, pulando nomes ocupados (PDF-02).
+def proxima_versao_pdf(fanfarra: str, arquivos_existentes: Iterable[str]) -> int:
+    """Maior PDF existente + 1, começando em v01, pulando nomes ocupados (PDF-02, PDF-03).
 
-    `versao_minima` continua a numeração da versão ChatGPT (PDF-03).
+    A versão de template não entra na conta.
     """
     existentes = set(arquivos_existentes)
     versoes = [v for a in existentes if (v := versao_do_pdf(a, fanfarra)) is not None]
-    versao = max([versao_template, versao_minima, *versoes]) + 1
+    versao = max(versoes, default=0) + 1
     ocupados = {a.casefold() for a in existentes}
     while nome_pdf(fanfarra, versao).casefold() in ocupados:
         versao += 1

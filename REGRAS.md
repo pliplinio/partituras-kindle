@@ -110,8 +110,8 @@ Para mudar uma regra: altere este arquivo, a matriz e os testes no mesmo PR.
 ## PDF — Geração e versionamento
 
 - [PDF-01] Nome final `<NOME>_vNN.pdf`, com underscore e pelo menos dois dígitos.
-- [PDF-02] Próxima versão = max(versão de template, versões de PDF existentes, versão mínima configurada) + 1. Em colisão, usar a próxima versão livre.
-- [PDF-03] **(pendente)** A versão mínima configurada continua a numeração da versão ChatGPT (ex.: próximo Skaravana = v15), para não reutilizar números já enviados ao Kindle.
+- [PDF-02] **(alterada)** Próxima versão = maior versão de PDF existente da fanfarra na pasta operacional + 1; sem PDF existente, `v01`. A versão de template não entra na conta. Em colisão, usar a próxima versão livre.
+- [PDF-03] **(novo)** A versão Claude tem numeração própria, que recomeça em `v01` e não continua a da versão ChatGPT. Um nome igual a um documento antigo no Kindle é aceito; a limpeza de KIN-06 remove as versões antigas.
 - [PDF-04] Nenhum PDF existente é sobrescrito.
 - [PDF-05] Fluxo integral: HTML canônico → PDF cru na ordem canônica → materialização do set list → PDF candidato.
 - [PDF-06] **(novo)** Conversor oficial único: Chromium headless em versão fixa, respeitando o tamanho de página do template (hoje 880×650 px). Cada `section.slide` gera exatamente uma página no PDF cru; diferença de contagem reprova.
@@ -169,10 +169,10 @@ Para mudar uma regra: altere este arquivo, a matriz e os testes no mesmo PR.
 
 - [KIN-01] Todo PDF final aprovado e confirmado no Drive é enviado automaticamente na mesma execução para `plinio.plinio_GuQd3r@kindle.com`, salvo pedido explícito de processamento sem envio.
 - [KIN-02] Nunca usar SMTP, senha ou credenciais manuais.
-- [KIN-03] **(pendente)** Usar o Gmail conectado quando o PDF couber no limite do conector; quando não couber (limite de 4,2 MB por chamada, cerca de 3,1 MB de anexo), usar o Gmail no navegador do app, inserindo o PDF do Drive como anexo, nunca como link.
+- [KIN-03] Usar o Gmail conectado quando o PDF couber no limite do conector; quando não couber (limite de 4,2 MB por chamada, cerca de 3,1 MB de anexo), usar o Gmail no navegador do app, inserindo o PDF do Drive como anexo, nunca como link.
 - [KIN-04] Antes de declarar bloqueio, tentar envio direto, depois rascunho e envio do rascunho, depois o caminho alternativo de KIN-03. Erro transitório de conector permite uma nova tentativa pelo mesmo caminho.
 - [KIN-05] Nunca trocar o anexo por link do Drive. Registrar cada tentativa, método e resultado.
-- [KIN-06] **(novo)** A Amazon não sobrescreve documentos de mesmo nome. Depois de um envio com sucesso, as versões antigas da mesma fanfarra podem ser apagadas em lote na página "Gerencie seu conteúdo e dispositivos", sempre com confirmação prévia da lista pelo usuário.
+- [KIN-06] **(novo)** A Amazon não sobrescreve documentos de mesmo nome. Depois de um envio com sucesso, os outros documentos versionados da mesma fanfarra (inclusive os da versão ChatGPT, mesmo com número maior, por causa de PDF-03) podem ser apagados em lote na página "Gerencie seu conteúdo e dispositivos", sempre com confirmação prévia da lista pelo usuário.
 
 ## FLX — Fluxo e eficiência
 
@@ -205,7 +205,7 @@ Para mudar uma regra: altere este arquivo, a matriz e os testes no mesmo PR.
 - [REL-01] Toda execução termina com relatório final explícito na resposta, inclusive em falha ou bloqueio, também salvo em `automacao`.
 - [REL-02] O relatório começa pelo tempo e segue o formato: tempo percebido pelo usuário, tempo do atendimento, início/fim, tempo do núcleo, fanfarra/música, HTML, PDF, SHA-256, imagens, páginas/preservação/sequência, set list/índice/retornos, fingerprint/inspeção, Drive/Kindle, tempos por etapa, pendências.
 - [REL-03] Sem timestamp do pedido, a primeira linha diz que o tempo é medido desde o início do atendimento.
-- [REL-04] **(pendente)** O relatório termina exatamente com `PROCESSAMENTO DO PDF: SUCESSO|FALHA`, `ENVIO AO KINDLE: SUCESSO|FALHA|BLOQUEADO|NAO_SOLICITADO` e `STATUS FINAL: SUCESSO|FALHA`. `NAO_SOLICITADO` só no processamento sem envio pedido explicitamente (KIN-01).
+- [REL-04] O relatório termina exatamente com `PROCESSAMENTO DO PDF: SUCESSO|FALHA`, `ENVIO AO KINDLE: SUCESSO|FALHA|BLOQUEADO|NAO_SOLICITADO` e `STATUS FINAL: SUCESSO|FALHA`. `NAO_SOLICITADO` só no processamento sem envio pedido explicitamente (KIN-01).
 - [REL-05] `STATUS FINAL: SUCESSO` somente quando todas as etapas obrigatórias, inclusive o gate de tempo, foram concluídas.
 
 ## TST — Testes de regressão

@@ -108,14 +108,13 @@ def _listagem(*nomes: str) -> list[Arquivo]:
     return [Arquivo(n, f"id-{n}") for n in nomes]
 
 
-def _planejar(nomes, versao_minima=0, versao_template=6):
+def _planejar(nomes, versao_template=6):
     return planejar_execucao(
         "Skaravana",
         _listagem(*nomes),
         lambda nome: b"<html>" + nome.encode(),
         "G:/Meu Drive/Tuba/partituras_claude",
         lambda _: versao_template,
-        versao_minima,
     )
 
 
@@ -134,7 +133,7 @@ def test_plano_congelado_com_anterior_aprovado():
     assert plano.anterior_pdf == "Skaravana_v13.pdf"  # v14 sem manifesto não é referência
     assert plano.anterior_manifesto == "automacao/manifestos/Skaravana_v13.manifest.json"
     assert plano.nome_pdf == "Skaravana_v15.pdf"
-    assert _planejar(["Skaravana.html"], versao_minima=14).nome_pdf == "Skaravana_v15.pdf"
+    assert _planejar(["Skaravana.html"]).nome_pdf == "Skaravana_v01.pdf"
     with pytest.raises(Inconsistencia, match="versão de template"):
         _planejar(["Skaravana.html"], versao_template=None)
 
@@ -174,9 +173,9 @@ def test_pasta_local_preserva_bytes_e_id(tmp_path):
     original = pasta.gravar("Skaravana.html", crlf, novo=True)
     reescrito = pasta.gravar("Skaravana.html", crlf + b"<!-- x -->", novo=False)
     assert original.id == reescrito.id and pasta.ler("Skaravana.html").endswith(b"-->")
-    pasta.gravar("Skaravana_v15.pdf", b"%PDF", novo=True)
+    pasta.gravar("Skaravana_v01.pdf", b"%PDF", novo=True)
     with pytest.raises(FileExistsError):
-        pasta.gravar("Skaravana_v15.pdf", b"%PDF outro", novo=True)
+        pasta.gravar("Skaravana_v01.pdf", b"%PDF outro", novo=True)
     with pytest.raises(ValueError):
         pasta.ler("../fora.txt")
 
@@ -195,7 +194,7 @@ def _cenario(tmp_path: Path, classe=PastaLocal):
     pasta = classe(tmp_path)
     original = b"<html>\r\noriginal\r\n</html>"
     pasta.gravar("Skaravana.html", original, novo=True)
-    plano = planejar_execucao("Skaravana", pasta.listar(), pasta.ler, pasta.local, lambda _: 6, 14)
+    plano = planejar_execucao("Skaravana", pasta.listar(), pasta.ler, pasta.local, lambda _: 6)
     pdf = b"%PDF-1.7 candidato"
     manifesto = {"pdf_sha256": sha256(pdf), "paginas": []}
     return pasta, plano, original, pdf, manifesto
@@ -207,9 +206,9 @@ def test_promocao_na_ordem_com_conferencia(tmp_path):
     novo_html = b"<html>\r\nnovo\r\n</html>"
     r = promover(pasta, plano, novo_html, pdf, sha256(pdf), manifesto)
     assert [o["operacao"] for o in r.operacoes] == ["gravar_html", "gravar_pdf", "gravar_manifesto"]
-    assert pasta.ler("Skaravana.html") == novo_html and pasta.ler("Skaravana_v15.pdf") == pdf
+    assert pasta.ler("Skaravana.html") == novo_html and pasta.ler("Skaravana_v01.pdf") == pdf
     assert r.pdf_sha256 == sha256(pdf) and r.html.id == plano.html_id
-    assert json.loads(pasta.ler(manifesto_de("Skaravana_v15.pdf")))["pdf_sha256"] == sha256(pdf)
+    assert json.loads(pasta.ler(manifesto_de("Skaravana_v01.pdf")))["pdf_sha256"] == sha256(pdf)
 
 
 def test_promocao_recusa_bytes_nao_inspecionados(tmp_path):
@@ -248,7 +247,7 @@ def test_caminho_de_envio_por_tamanho():
 
 def test_bloqueio_so_depois_de_todas_as_tentativas():
     """KIN-04, KIN-05, PRO-05."""
-    e = Envio("Skaravana_v15.pdf", "a" * 64, 1_000_000)
+    e = Envio("Skaravana_v01.pdf", "a" * 64, 1_000_000)
     assert e.status is Status.FALHA and e.proximo_caminho() is Metodo.ENVIO_DIRETO
     e.registrar(Metodo.ENVIO_DIRETO, False, "limite")
     assert e.proximo_caminho() is Metodo.RASCUNHO
@@ -273,8 +272,12 @@ def test_envio_nao_solicitado():
 
 def test_versoes_antigas_do_kindle():
     """KIN-06."""
-    titulos = ["Skaravana_v13", "Skaravana_v14", "Skaravana_v15", "Xamego_v38", "Skaravana"]
-    assert versoes_antigas("Skaravana", titulos, 15) == ["Skaravana_v13", "Skaravana_v14"]
+    titulos = ["Skaravana_v13", "Skaravana_v14", "Skaravana_v01", "Xamego_v38", "Skaravana"]
+    # Numeração recomeçada (PDF-03): v14 da versão ChatGPT também é antigo.
+    assert versoes_antigas("Skaravana", titulos, "Skaravana_v01") == [
+        "Skaravana_v13",
+        "Skaravana_v14",
+    ]
 
 
 # --- Histórico e relatório -------------------------------------------------------------------
@@ -310,7 +313,7 @@ def test_relatorio_formato():
         "processamento_ok": True,
         "fanfarra": "Skaravana",
         "versao_template": 6,
-        "pdf": "Skaravana_v15.pdf",
+        "pdf": "Skaravana_v01.pdf",
         "kindle": {"status": "SUCESSO"},
     }
     texto = montar(dados, _cronometro_completo(etapas), etapas)

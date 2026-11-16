@@ -3,6 +3,19 @@
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/);
 versões seguem [SemVer](https://semver.org/lang/pt-BR/).
 
+## [0.6.0] - 2026-11-16
+
+Decisões do usuário antes do piloto.
+
+### Alterado
+
+- PDF-02 e PDF-03: numeração própria da versão Claude, recomeçando em `v01`; a próxima versão
+  é o maior PDF existente + 1, e a versão de template não entra na conta. Sai o parâmetro
+  `--versao-minima`.
+- KIN-06: a limpeza lista todos os outros documentos versionados da fanfarra, porque os da
+  versão ChatGPT podem ter número maior que o novo.
+- KIN-03 e REL-04 aprovados como estavam propostos.
+
 ## [0.5.0] - 2026-11-16
 
 Etapa 5: execução completa, promoção, Kindle, histórico e relatório.

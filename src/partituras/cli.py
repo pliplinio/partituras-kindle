@@ -3,7 +3,7 @@
 Fluxo de uma execução (o diretório de trabalho guarda o estado entre passos):
 
     partituras iniciar   --trabalho T [--pedido ISO] [--sem-envio]
-    partituras preparar  --trabalho T --pasta P --fanfarra F [--versao-minima N]
+    partituras preparar  --trabalho T --pasta P --fanfarra F
     partituras gerar     --trabalho T [--setlist arquivo.txt]
     partituras substituir --trabalho T --pasta P --musica M --imagens a.png [b.png ...]
     partituras aprovar   --trabalho T --inspecionadas 1-5,9 [--achado 3:texto]
@@ -57,7 +57,6 @@ def construir_parser() -> argparse.ArgumentParser:
 
     p = comando("preparar", "lista a pasta uma vez e congela o plano", pasta=True)
     p.add_argument("--fanfarra", required=True)
-    p.add_argument("--versao-minima", type=int, default=0)
     p.add_argument(
         "--sem-kindle-disponivel",
         action="store_true",
@@ -97,9 +96,7 @@ def executar_comando(args: argparse.Namespace) -> object:
         acoes = {"gravar_html", "criar_pdf", "ler_confirmar"}
         if not args.sem_kindle_disponivel:
             acoes.add("enviar_kindle")
-        plano = executar.preparar(
-            estado, PastaLocal(args.pasta), args.fanfarra, acoes, args.versao_minima
-        )
+        plano = executar.preparar(estado, PastaLocal(args.pasta), args.fanfarra, acoes)
         return plano.como_dict()
     if args.comando == "gerar":
         texto = args.setlist.read_text(encoding="utf-8") if args.setlist else None

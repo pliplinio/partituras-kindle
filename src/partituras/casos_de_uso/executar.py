@@ -136,7 +136,6 @@ def preparar(
     pasta: Pasta,
     fanfarra: str,
     acoes: set[str],
-    versao_minima: int = 0,
 ) -> PlanoExecucao:
     """PRO-06 e FLX-01: confere ações, lista a pasta uma vez e congela o plano."""
     with estado.etapa("preparar"):
@@ -150,7 +149,6 @@ def preparar(
             pasta.ler,
             pasta.local,
             lambda b: Documento.de_bytes(b).versao_template,
-            versao_minima,
         )
         (estado.trabalho / "original.html").write_bytes(plano.html_bytes)
         manifesto_anterior = None
