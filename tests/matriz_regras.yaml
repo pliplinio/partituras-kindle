@@ -4,7 +4,7 @@
 # O CI falha se uma regra de REGRAS.md faltar aqui, se houver regra a mais,
 # ou se uma regra com etapa <= ETAPA_ATUAL estiver sem teste.
 
-etapa_atual: 1
+etapa_atual: 2
 
 regras:
   ARQ-01:
@@ -15,7 +15,8 @@ regras:
     testes: []
   ARQ-03:
     etapa: 2
-    testes: []
+    testes: 
+      - test_versoes.py::test_fonte_e_o_html_nunca_pptx
   ARQ-04:
     etapa: 5
     testes: []
@@ -24,124 +25,171 @@ regras:
     testes: []
   HTML-01:
     etapa: 2
-    testes: []
+    testes: 
+      - test_versoes.py::test_html_tem_nome_fixo_sem_versao
   HTML-02:
     etapa: 2
-    testes: []
+    testes: 
+      - test_html.py::test_versao_de_template_gravada_no_arquivo
   HTML-03:
     etapa: 2
-    testes: []
+    testes: 
+      - test_versoes.py::test_template_muda_so_em_alteracao_de_template
   HTML-04:
     etapa: 2
-    testes: []
+    testes: 
+      - test_html.py::test_edicao_nao_muda_versao_de_template
+      - test_versoes.py::test_template_muda_so_em_alteracao_de_template
   HTML-05:
     etapa: 2
-    testes: []
+    testes: 
+      - test_versoes.py::test_nova_versao_de_template_e_mais_um
   HTML-06:
     etapa: 2
-    testes: []
+    testes: 
+      - test_versoes.py::test_versao_anterior_vai_para_old
   HTML-07:
     etapa: 2
-    testes: []
+    testes: 
+      - test_html.py::test_edicao_gera_candidato_sem_alterar_o_original
   HTML-08:
     etapa: 2
-    testes: []
+    testes: 
+      - test_html.py::test_html_canonico_continua_com_o_mesmo_nome
   HTML-09:
     etapa: 2
-    testes: []
+    testes: 
+      - test_html.py::test_leitura_e_gravacao_preservam_bytes
+      - test_html.py::test_troca_preserva_bytes_fora_do_grupo_com_crlf
+      - test_html_reais.py::test_regenerar_sem_mudancas_nao_altera_bytes
   HTML-10:
     etapa: 2
-    testes: []
+    testes: 
+      - test_html.py::test_edicao_nao_muda_versao_de_template
+      - test_versoes.py::test_template_muda_so_em_alteracao_de_template
   EST-01:
     etapa: 2
-    testes: []
+    testes: 
+      - test_repertorio.py::test_ids_unicos
   EST-02:
     etapa: 2
-    testes: []
+    testes: 
+      - test_repertorio.py::test_partitura_declara_todos_os_atributos
   EST-03:
     etapa: 2
-    testes: []
+    testes: 
+      - test_html.py::test_validacao_detecta_pagina_sem_abc
   EST-04:
     etapa: 2
-    testes: []
+    testes: 
+      - test_html.py::test_estrutura_lida_dos_atributos
   EST-05:
     etapa: 2
-    testes: []
+    testes: 
+      - test_html.py::test_papeis_das_secoes
   EST-06:
     etapa: 2
-    testes: []
+    testes: 
+      - test_html.py::test_papeis_das_secoes
   MULTI-01:
     etapa: 2
-    testes: []
+    testes: 
+      - test_repertorio.py::test_grupo_reune_as_paginas_da_musica
   MULTI-02:
     etapa: 2
-    testes: []
+    testes: 
+      - test_repertorio.py::test_paginas_do_grupo_consecutivas
   MULTI-03:
     etapa: 2
-    testes: []
+    testes: 
+      - test_repertorio.py::test_partes_1_a_n_com_mesmo_total
   MULTI-04:
     etapa: 2
-    testes: []
+    testes: 
+      - test_repertorio.py::test_inconsistencia_reprova
   MUS-01:
     etapa: 2
-    testes: []
+    testes: 
+      - test_html.py::test_pedido_exige_fanfarra_nome_e_imagens
   MUS-02:
     etapa: 2
-    testes: []
+    testes: 
+      - test_html.py::test_troca_substitui_so_o_grupo_e_reaproveita_ids
   MUS-03:
     etapa: 2
-    testes: []
+    testes: 
+      - test_html.py::test_inclusao_adiciona_grupo_sem_remover_nenhum
+      - test_html.py::test_troca_substitui_so_o_grupo_e_reaproveita_ids
   MUS-04:
     etapa: 2
-    testes: []
+    testes: 
+      - test_html.py::test_grupo_nao_contiguo_bloqueia_edicao
+      - test_html.py::test_troca_substitui_so_o_grupo_e_reaproveita_ids
   MUS-05:
     etapa: 2
-    testes: []
+    testes: 
+      - test_html.py::test_inclusao_adiciona_grupo_sem_remover_nenhum
+      - test_html.py::test_troca_substitui_so_o_grupo_e_reaproveita_ids
   MUS-06:
     etapa: 2
-    testes: []
+    testes: 
+      - test_html.py::test_inclusao_adiciona_grupo_sem_remover_nenhum
   MUS-07:
     etapa: 2
-    testes: []
+    testes: 
+      - test_html.py::test_validacao_detecta_imagem_trocada
   MUS-08:
     etapa: 2
-    testes: []
+    testes: 
+      - test_html.py::test_inclusao_adiciona_grupo_sem_remover_nenhum
   LAY-01:
     etapa: 2
-    testes: []
+    testes: 
+      - test_html.py::test_raw_score_preenche_area_abaixo_do_cabecalho
   LAY-02:
     etapa: 2
-    testes: []
+    testes: 
+      - test_html.py::test_raw_score_preenche_area_abaixo_do_cabecalho
   LAY-03:
     etapa: 2
-    testes: []
+    testes: 
+      - test_html.py::test_inclusao_adiciona_grupo_sem_remover_nenhum
   LAY-04:
     etapa: 2
-    testes: []
+    testes: 
+      - test_html.py::test_overlay_imagem_inteira_e_cabecalho_transparente
   LAY-05:
     etapa: 6
     testes: []
   LAY-06:
     etapa: 2
-    testes: []
+    testes: 
+      - test_html.py::test_modo_do_grupo_e_preservado
+      - test_html.py::test_overlay_escolhe_posicao_sem_tinta
   LAY-07:
     etapa: 6
     testes: []
   IDX-01:
     etapa: 2
-    testes: []
+    testes: 
+      - test_repertorio.py::test_indice_uma_entrada_por_musica_em_ordem_alfabetica
   IDX-02:
     etapa: 2
-    testes: []
+    testes: 
+      - test_repertorio.py::test_indice_uma_entrada_por_musica_em_ordem_alfabetica
   IDX-03:
     etapa: 2
-    testes: []
+    testes: 
+      - test_repertorio.py::test_rotulo_do_indice_limitado_a_22
   IDX-04:
     etapa: 2
-    testes: []
+    testes: 
+      - test_html.py::test_indice_em_tres_colunas_reais_coluna_a_coluna
+      - test_repertorio.py::test_tres_colunas_equilibradas
   IDX-05:
     etapa: 3
-    testes: []
+    testes: 
+      - test_html.py::test_indice_aponta_para_primeira_pagina
   IDX-06:
     etapa: 3
     testes: []
@@ -153,10 +201,12 @@ regras:
     testes: []
   SET-02:
     etapa: 2
-    testes: []
+    testes: 
+      - test_html.py::test_setlist_em_texto_real_com_links
   SET-03:
     etapa: 2
-    testes: []
+    testes: 
+      - test_html.py::test_setlist_em_texto_real_com_links
   SET-04:
     etapa: 3
     testes: []
@@ -165,16 +215,23 @@ regras:
     testes: []
   SET-06:
     etapa: 2
-    testes: []
+    testes: 
+      - test_html.py::test_setlist_segue_a_ordem_informada
   SET-07:
     etapa: 2
-    testes: []
+    testes: 
+      - test_setlist_texto.py::test_formatos_aceitos
+      - test_setlist_texto.py::test_linha_duvidosa_e_musica
   SET-08:
     etapa: 2
-    testes: []
+    testes: 
+      - test_html.py::test_sem_setlist_pagina_inicial_e_indice
+      - test_repertorio.py::test_pagina_inicial
   SET-09:
     etapa: 3
-    testes: []
+    testes: 
+      - test_html.py::test_setlist_sem_partitura_fica_visivel_sem_link
+      - test_setlist_texto.py::test_musica_sem_partitura_fica_sem_grupo
   PRES-01:
     etapa: 3
     testes: []
@@ -189,31 +246,44 @@ regras:
     testes: []
   NOM-01:
     etapa: 2
-    testes: []
+    testes: 
+      - test_nomes.py::test_aceita_diferencas_inequivocas
+      - test_nomes.py::test_igualdade_normalizada_vence
   NOM-02:
     etapa: 2
-    testes: []
+    testes: 
+      - test_nomes.py::test_registra_melhor_segundo_e_diferenca
   NOM-03:
     etapa: 2
-    testes: []
+    testes: 
+      - test_nomes.py::test_diferenca_menor_que_008_e_ambigua
   NOM-04:
     etapa: 2
-    testes: []
+    testes: 
+      - test_html.py::test_setlist_ambiguo_interrompe
+      - test_nomes.py::test_diferenca_menor_que_008_e_ambigua
+      - test_nomes.py::test_dois_exatos_iguais_sao_ambiguos
   NOM-05:
     etapa: 2
-    testes: []
+    testes: 
+      - test_nomes.py::test_ska_paralamas_e_skaravan_nunca_se_confundem
   PDF-01:
     etapa: 2
-    testes: []
+    testes: 
+      - test_versoes.py::test_nome_do_pdf
   PDF-02:
     etapa: 2
-    testes: []
+    testes: 
+      - test_versoes.py::test_colisao_usa_proxima_livre
+      - test_versoes.py::test_proxima_versao_considera_template_pdfs_e_minima
   PDF-03:
     etapa: 2
-    testes: []
+    testes: 
+      - test_versoes.py::test_versao_minima_continua_a_numeracao_antiga
   PDF-04:
     etapa: 2
-    testes: []
+    testes: 
+      - test_versoes.py::test_nunca_sobrescreve_pdf
   PDF-05:
     etapa: 3
     testes: []
@@ -279,7 +349,10 @@ regras:
     testes: []
   VAL-06:
     etapa: 2
-    testes: []
+    testes: 
+      - test_html.py::test_edicao_nao_muda_versao_de_template
+      - test_html.py::test_validacao_detecta_imagem_trocada
+      - test_html.py::test_validacao_detecta_pagina_sem_abc
   VAL-07:
     etapa: 3
     testes: []
@@ -366,7 +439,8 @@ regras:
     testes: []
   FLX-06:
     etapa: 2
-    testes: []
+    testes: 
+      - test_nomes.py::test_aproximacao_inequivoca_nao_interrompe
   TMP-01:
     etapa: 5
     testes: []
