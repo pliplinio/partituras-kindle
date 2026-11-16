@@ -161,6 +161,16 @@ CHECKLIST = (
 )
 
 
+# Cinco itens extras do template score-overlay-header-v2 (LAY-07).
+CHECKLIST_OVERLAY = (
+    "imagem sem corte ou redução indevida",
+    "título legível sem sobreposição",
+    "sem resíduo do cabeçalho antigo",
+    "ABC legível sem duplicação",
+    "nenhuma cifra ou marcação apagada",
+)
+
+
 @dataclass
 class RegistroInspecao:
     sha256: str
@@ -180,6 +190,7 @@ def registrar_inspecao(
     delta: Delta,
     inspecionadas: Sequence[int],
     achados: dict[int, str] | None = None,
+    overlay: bool = False,
 ) -> RegistroInspecao:
     """Só declara inspeção das páginas realmente inspecionadas (INS-06, INS-07).
 
@@ -196,4 +207,5 @@ def registrar_inspecao(
         inspecionadas=sorted(set(inspecionadas)),
         reutilizadas=sorted(delta.reutilizaveis),
         achados=dict(achados or {}),
+        checklist=CHECKLIST + CHECKLIST_OVERLAY if overlay else CHECKLIST,
     )

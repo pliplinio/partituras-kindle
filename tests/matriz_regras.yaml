@@ -4,7 +4,7 @@
 # O CI falha se uma regra de REGRAS.md faltar aqui, se houver regra a mais,
 # ou se uma regra com etapa <= ETAPA_ATUAL estiver sem teste.
 
-etapa_atual: 5
+etapa_atual: 7
 
 regras:
   ARQ-01:
@@ -165,7 +165,8 @@ regras:
       - test_html.py::test_overlay_imagem_inteira_e_cabecalho_transparente
   LAY-05:
     etapa: 6
-    testes: []
+    testes: 
+      - test_html.py::test_imagem_recebida_entra_sem_alteracao_de_pixels
   LAY-06:
     etapa: 2
     testes: 
@@ -173,7 +174,8 @@ regras:
       - test_html.py::test_overlay_escolhe_posicao_sem_tinta
   LAY-07:
     etapa: 6
-    testes: []
+    testes: 
+      - test_golden.py::test_overlay_exige_os_cinco_itens
   IDX-01:
     etapa: 2
     testes: 
@@ -201,6 +203,10 @@ regras:
     etapa: 3
     testes: 
       - test_golden.py::test_indice_fisico_em_tres_colunas
+  IDX-08:
+    etapa: 3
+    testes: 
+      - test_repertorio.py::test_rotulo_do_pdf_so_com_caracteres_desenhaveis
   IDX-07:
     etapa: 3
     testes: 

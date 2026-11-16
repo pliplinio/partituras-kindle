@@ -134,13 +134,18 @@ def _indice(pagina, plano: Plano, rel: RelatorioGate) -> None:
     localizadas: list[tuple[str, Linha]] = []
     for item in plano.indice:
         registro = {"titulo": item.entrada.titulo, "esperado": item.pagina + 1}
-        achado = linha_exata(candidatas, item.entrada.rotulo, usadas)
+        achado = linha_exata(candidatas, item.entrada.rotulo_pdf, usadas)
         if achado is None:
             rel.violacoes.append(f"índice: {item.entrada.titulo} sem correspondência inequívoca")
             rel.indice.append({**registro, "ok": False})
             continue
         usadas.add(achado[0])
-        localizadas.append((item.entrada.rotulo, achado[1]))
+        if achado[1].texto.strip() != item.entrada.rotulo_pdf.strip():
+            rel.violacoes.append(
+                f"índice: texto desenhado {achado[1].texto.strip()!r} difere de "
+                f"{item.entrada.rotulo_pdf!r} (IDX-08)"
+            )
+        localizadas.append((item.entrada.rotulo_pdf, achado[1]))
         ok, destinos, cob = _conferir_link(pagina, achado[1], item.pagina)
         rel.indice.append(
             {
@@ -175,7 +180,7 @@ def _indice(pagina, plano: Plano, rel: RelatorioGate) -> None:
     if rel.indice_colunas != ocupadas:
         rel.violacoes.append(f"índice: colunas {rel.indice_colunas}, esperado {esperado}")
     leitura = [normalizar(ln.texto) for coluna in por_coluna for _, ln in coluna]
-    if leitura != [normalizar(d.entrada.rotulo) for d in plano.indice]:
+    if leitura != [normalizar(d.entrada.rotulo_pdf) for d in plano.indice]:
         rel.violacoes.append("índice: leitura coluna a coluna fora da ordem alfabética")
 
 

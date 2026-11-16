@@ -31,7 +31,13 @@ from partituras.html.edicao import (
 )
 from partituras.pdf import gate
 from partituras.pdf.fingerprint import delta, manifesto
-from partituras.pdf.inspecao import folhas_de_contato, pre_validar, registrar_inspecao, renderizar
+from partituras.pdf.inspecao import (
+    CHECKLIST_OVERLAY,
+    folhas_de_contato,
+    pre_validar,
+    registrar_inspecao,
+    renderizar,
+)
 
 pytestmark = pytest.mark.chromium
 
@@ -398,6 +404,18 @@ def test_registro_de_inspecao_exige_todas_as_paginas(pdf_04):
     reg = registrar_inspecao(pdf_04.candidato, d, list(range(1, 9)))
     assert reg.sha256 == pdf_04.sha256 and reg.aprovada
     assert "cortes" in reg.checklist and "páginas ausentes" in reg.checklist
+    assert "sem resíduo do cabeçalho antigo" not in reg.checklist
+
+
+def test_overlay_exige_os_cinco_itens(pdf_04):
+    """LAY-07: no template overlay a inspeção registra os cinco itens extras."""
+    d = delta(manifesto(pdf_04.candidato), None)
+    reg = registrar_inspecao(pdf_04.candidato, d, list(range(1, 9)), overlay=True)
+    assert set(CHECKLIST_OVERLAY) <= set(reg.checklist) and len(CHECKLIST_OVERLAY) == 5
+    reprovada = registrar_inspecao(
+        pdf_04.candidato, d, list(range(1, 9)), {5: "ABC duplicado"}, overlay=True
+    )
+    assert not reprovada.aprovada
 
 
 def test_folhas_de_contato_ate_6(pdf_04, tmp_path):

@@ -66,7 +66,7 @@ Para mudar uma regra: altere este arquivo, a matriz e os testes no mesmo PR.
 - [LAY-02] Nos templates com cabeçalho separado (raw-score), a imagem ocupa toda a área abaixo do cabeçalho (`width:100%; height:100%; object-fit:fill`).
 - [LAY-03] Música de uma página exibe `Nome da Música`; multipágina exibe `Nome da Música (k de N)` e `ABC` em todas as páginas.
 - [LAY-04] No template `score-overlay-header-v2`, a imagem ocupa a página inteira (880×650), sem corte, sem redução e sem `clip-path`, com cabeçalho HTML transparente sobreposto: título 17 px, `ABC` 14 px, caixa de 18 px de altura em `top: 17px`, largura ajustada ao texto.
-- [LAY-05] Na limpeza de título/`ABC` antigos embutidos nos pixels, apagar só a região estritamente necessária, sem faixa branca no topo e sem atingir cifras, marcações, compassos ou outro conteúdo musical. A posição horizontal aprovada de cada título é preservada quando necessária para evitar sobreposição.
+- [LAY-05] Na limpeza de título/`ABC` antigos embutidos nos pixels, apagar só a região estritamente necessária, sem faixa branca no topo e sem atingir cifras, marcações, compassos ou outro conteúdo musical. A posição horizontal aprovada de cada título é preservada quando necessária para evitar sobreposição. **(esclarecido)** O código nunca altera os pixels da imagem recebida: a limpeza, quando necessária, é feita antes, na imagem fornecida, e conferida pela inspeção de LAY-07.
 - [LAY-06] Ao editar uma música num HTML `score-overlay-header-v2`, o modo de cada grupo é preservado: overlay continua overlay e raw-score continua raw-score. Página overlay nova escolhe a posição horizontal de menor interferência visual.
 - [LAY-07] Toda edição nesse template exige verificação visual de cinco itens antes da promoção: imagem sem corte ou redução indevida; título legível sem sobreposição; sem resíduo do cabeçalho antigo; `ABC` legível sem duplicação; nenhuma cifra ou marcação apagada. Falha em qualquer item reprova o candidato.
 
@@ -78,6 +78,7 @@ Para mudar uma regra: altere este arquivo, a matriz e os testes no mesmo PR.
 - [IDX-04] Três colunas reais (CSS Grid ou tabela), preenchidas coluna a coluna, com diferença máxima de 1 item entre colunas. Ex.: 29 músicas = 10/10/9.
 - [IDX-05] Cada item aponta para a primeira ocorrência física da música no PDF; música fora do set list aponta para sua página preservada ao final.
 - [IDX-06] No PDF, o índice é materializado em 3 colunas reais; conversão que linearize as colunas não pode ser promovida.
+- [IDX-08] **(novo)** O texto do índice desenhado no PDF usa só caracteres que a fonte representa: apóstrofos e aspas tipográficos viram retos, travessões viram hífen e reticências viram três pontos; o título completo no HTML não muda.
 - [IDX-07] A validação reconstrói a leitura coluna 1, 2 e 3 de cima para baixo e compara exatamente com a lista alfabética esperada. Com menos de três músicas, colunas que devem estar vazias não reprovam.
 
 ## SET — Set list

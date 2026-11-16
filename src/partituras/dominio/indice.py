@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import unicodedata
 from dataclasses import dataclass
 
 from partituras.dominio.modelos import Repertorio
@@ -9,6 +10,31 @@ from partituras.dominio.nomes import chave_ordenacao
 
 LIMITE_ROTULO = 22
 COLUNAS = 3
+
+# A fonte do índice desenhado no PDF só representa Latin-1 (IDX-08).
+_TROCAS = str.maketrans(
+    {
+        "\u2018": "'", "\u2019": "'", "\u201a": "'", "\u2032": "'", "\u00b4": "'",
+        "\u201c": '"', "\u201d": '"', "\u201e": '"', "\u2033": '"',
+        "\u2013": "-", "\u2014": "-", "\u2212": "-", "\u2026": "...", "\u00a0": " ",
+    }
+)  # fmt: skip
+
+
+def texto_desenhavel(texto: str) -> str:
+    """Troca pontuação tipográfica por equivalente simples; decompõe o resto fora do Latin-1."""
+    saida = []
+    for c in texto.translate(_TROCAS):
+        if ord(c) < 256:
+            saida.append(c)
+            continue
+        simples = "".join(
+            d
+            for d in unicodedata.normalize("NFKD", c)
+            if ord(d) < 256 and not unicodedata.combining(d)
+        )
+        saida.append(simples or "?")
+    return "".join(saida)
 
 
 @dataclass(frozen=True)
@@ -19,8 +45,13 @@ class EntradaIndice:
 
     @property
     def rotulo(self) -> str:
-        """Texto exibido, limitado a 22 caracteres (IDX-03)."""
+        """Texto exibido no HTML, limitado a 22 caracteres (IDX-03)."""
         return self.titulo[:LIMITE_ROTULO]
+
+    @property
+    def rotulo_pdf(self) -> str:
+        """Texto desenhado no índice do PDF (IDX-03, IDX-08)."""
+        return texto_desenhavel(self.titulo)[:LIMITE_ROTULO]
 
 
 def entradas_indice(repertorio: Repertorio) -> list[EntradaIndice]:
