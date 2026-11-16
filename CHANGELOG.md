@@ -3,6 +3,31 @@
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/);
 versões seguem [SemVer](https://semver.org/lang/pt-BR/).
 
+## [0.4.0] - 2026-11-15
+
+Etapa 4: reaproveitamento de inspeção e troca rápida de música.
+
+### Adicionado
+
+
+- `pdf/fingerprint.py`: manifesto por página a 110 DPI (pixels, texto e links), compatível com o
+  formato `partituras-pdf-page-manifest-v1` da versão anterior. O manifesto do Skaravana v14
+  recalculado aqui é idêntico ao gravado pela versão ChatGPT.
+- Delta independente da posição da página; inspeção integral obrigatória em mudança de template,
+  de renderizador, de tamanho de página, sem PDF anterior verificável ou a pedido (INS-04).
+- Links do índice inseridos linha a linha da tabela, como na versão anterior: o candidato do
+  Skaravana reaproveita a inspeção das 28 páginas do v14 sem diferença de links.
+- `pdf/patch.py`: patch incremental que troca só a imagem da música em todas as ocorrências,
+  sobre o PDF anterior com SHA-256 aprovado; qualquer incompatibilidade cai para a geração
+  integral com o motivo registrado (PDF-11, PDF-12).
+- `html/escopo.py`: gate de escopo da substituição simples (VAL-04).
+- `pdf/inspecao.py`: gate nominal (VAL-05), pré-validação visual (VAL-08), renderização seletiva,
+  folhas de contato de até 6 páginas e registro de inspeção que recusa páginas não vistas.
+- `casos_de_uso/substituir_musica.py`: caminho rápido completo. Trocar uma música do Skaravana
+  leva cerca de 2 s e pede inspeção só das páginas dela.
+- Cenários golden 05 e 06; `tests/golden/laboratorio.py` com comparação e promoção de golden
+  só com aprovação visual explícita (TST-03, TST-04).
+
 ## [0.3.0] - 2026-11-15
 
 ### Adicionado

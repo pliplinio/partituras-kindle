@@ -4,7 +4,7 @@
 # O CI falha se uma regra de REGRAS.md faltar aqui, se houver regra a mais,
 # ou se uma regra com etapa <= ETAPA_ATUAL estiver sem teste.
 
-etapa_atual: 3
+etapa_atual: 4
 
 regras:
   ARQ-01:
@@ -332,10 +332,15 @@ regras:
       - test_golden.py::test_falha_no_gate_descarta_candidato
   PDF-11:
     etapa: 4
-    testes: []
+    testes: 
+      - test_golden.py::test_05_substituicao_rapida_uma_pagina
+      - test_golden.py::test_06_substituicao_rapida_multipagina
+      - test_golden.py::test_patch_exige_sha_aprovado
+      - test_golden.py::test_patch_preserva_links_das_outras_paginas
   PDF-12:
     etapa: 4
-    testes: []
+    testes: 
+      - test_golden.py::test_mudanca_de_partes_cai_para_geracao_integral
   LNK-01:
     etapa: 3
     testes: 
@@ -387,10 +392,13 @@ regras:
       - test_golden.py::test_indice_sem_link_e_rejeitado
   VAL-04:
     etapa: 4
-    testes: []
+    testes: 
+      - test_golden.py::test_escopo_bloqueia_mudanca_fora_do_grupo
   VAL-05:
     etapa: 4
-    testes: []
+    testes: 
+      - test_golden.py::test_05_substituicao_rapida_uma_pagina
+      - test_golden.py::test_06_substituicao_rapida_multipagina
   VAL-06:
     etapa: 2
     testes: 
@@ -405,34 +413,48 @@ regras:
       - test_plano.py::test_sem_indice_bloqueia
   VAL-08:
     etapa: 4
-    testes: []
+    testes: 
+      - test_golden.py::test_pre_validacao_sinaliza_pagina_vazia
   INS-01:
     etapa: 4
-    testes: []
+    testes: 
+      - test_fingerprint.py::test_manifesto_cobre_todas_as_paginas
+      - test_fingerprint.py::test_destino_no_ponto_zero_entra_no_fingerprint_de_links
   INS-02:
     etapa: 4
-    testes: []
+    testes: 
+      - test_fingerprint.py::test_reuso_independe_da_posicao
+      - test_fingerprint.py::test_manifesto_anterior_exige_sha_aprovado
   INS-03:
     etapa: 4
-    testes: []
+    testes: 
+      - test_fingerprint.py::test_mudanca_so_de_links_reaproveita_e_registra
   INS-04:
     etapa: 4
-    testes: []
+    testes: 
+      - test_fingerprint.py::test_inspecao_integral_obrigatoria
+      - test_fingerprint.py::test_inspecao_integral_sem_anterior_e_com_outro_tamanho
   INS-05:
     etapa: 4
-    testes: []
+    testes: 
+      - test_golden.py::test_folhas_de_contato_ate_6
+      - test_golden.py::test_05_substituicao_rapida_uma_pagina
   INS-06:
     etapa: 4
-    testes: []
+    testes: 
+      - test_golden.py::test_registro_de_inspecao_exige_todas_as_paginas
   INS-07:
     etapa: 4
-    testes: []
+    testes: 
+      - test_golden.py::test_registro_de_inspecao_exige_todas_as_paginas
   INS-09:
     etapa: 4
-    testes: []
+    testes: 
+      - test_fingerprint.py::test_manifesto_anterior_exige_sha_aprovado
   INS-08:
     etapa: 4
-    testes: []
+    testes: 
+      - test_fingerprint.py::test_manifesto_aprovado_registra_inspecao_e_origem
   PRO-01:
     etapa: 5
     testes: []
@@ -477,13 +499,17 @@ regras:
     testes: []
   FLX-03:
     etapa: 4
-    testes: []
+    testes: 
+      - test_golden.py::test_05_substituicao_rapida_uma_pagina
   FLX-04:
     etapa: 4
-    testes: []
+    testes: 
+      - test_golden.py::test_mudanca_de_partes_cai_para_geracao_integral
   FLX-05:
     etapa: 4
-    testes: []
+    testes: 
+      - test_fingerprint.py::test_mesmo_sha_reaproveita_tudo
+      - test_golden.py::test_mesmo_pdf_reaproveita_tudo
   FLX-06:
     etapa: 2
     testes: 
@@ -547,12 +573,17 @@ regras:
       - test_golden.py::test_07_setlist_reordenado
       - test_golden.py::test_11_link_externo_e_rejeitado
       - test_golden.py::test_cenarios_sequenciais
+      - test_golden.py::test_05_substituicao_rapida_uma_pagina
+      - test_golden.py::test_06_substituicao_rapida_multipagina
   TST-03:
     etapa: 4
-    testes: []
+    testes: 
+      - test_fingerprint.py::test_pass_e_regressao_validada
   TST-04:
     etapa: 4
-    testes: []
+    testes: 
+      - test_fingerprint.py::test_golden_compara_sem_alterar_referencia
+      - test_fingerprint.py::test_golden_exige_aprovacao_visual_explicita
   TST-05:
     etapa: 1
     testes: 

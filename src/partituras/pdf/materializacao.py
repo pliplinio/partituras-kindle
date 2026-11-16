@@ -134,7 +134,9 @@ def _links_frente(doc: pymupdf.Document, plano: Plano) -> tuple[int, int]:
     pagina = doc[plano.pagina_indice]
     candidatas, usadas = linhas(pagina), set()
     n_indice = 0
-    for destino in plano.indice:
+    # Inserção linha a linha da tabela, como na versão anterior: a ordem dos links
+    # entra no fingerprint e precisa ser estável entre versões.
+    for destino in _linha_a_linha(plano.indice):
         achado = linha_exata(candidatas, destino.entrada.rotulo, usadas)
         if achado is None:
             falhas.append(f"índice: {destino.entrada.titulo} não encontrado")
@@ -146,6 +148,12 @@ def _links_frente(doc: pymupdf.Document, plano: Plano) -> tuple[int, int]:
     if falhas:
         raise Inconsistencia("navegação da frente do PDF: " + "; ".join(falhas))
     return n_setlist, n_indice
+
+
+def _linha_a_linha(itens: list) -> list:
+    cols = colunas(itens)
+    linhas_tabela = max(map(len, cols), default=0)
+    return [cols[c][r] for r in range(linhas_tabela) for c in range(3) if r < len(cols[c])]
 
 
 def retangulos_cabecalho(pagina: pymupdf.Page) -> tuple[pymupdf.Rect, pymupdf.Rect]:
@@ -180,12 +188,17 @@ def area_clicavel(rect: pymupdf.Rect, pagina: pymupdf.Rect) -> pymupdf.Rect:
 
 
 def _links_retorno(doc: pymupdf.Document, plano: Plano) -> list[int]:
-    """Título e `ABC` de toda página de partitura viram GoTo para a página 1 (LNK-01, LNK-02).
+    return recriar_retornos(doc, plano.paginas_partitura)
 
-    Só páginas de partitura do plano; auxiliares não recebem (LNK-04).
+
+def recriar_retornos(doc: pymupdf.Document, paginas_partitura: list) -> list[int]:
+    """Título e `ABC` de cada página de partitura viram GoTo para a página 1 (LNK-01, LNK-02).
+
+    Só páginas de partitura do plano; auxiliares não recebem (LNK-04). Os links
+    são inseridos depois do conteúdo gráfico, na camada de anotações.
     """
     feitas = []
-    for p in plano.paginas_partitura:
+    for p in paginas_partitura:
         pagina = doc[p.pagina]
         faixa = pymupdf.Rect(0, 0, pagina.rect.width, pagina.rect.height * FAIXA_CABECALHO)
         for link in list(pagina.get_links()):
