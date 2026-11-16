@@ -3,6 +3,13 @@
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/);
 versões seguem [SemVer](https://semver.org/lang/pt-BR/).
 
+## [0.6.2] - 2026-11-16
+
+### Corrigido
+
+- KIN-06: a lista de documentos antigos no Kindle reconhece sufixos depois da versão
+  (`Xamego_v38_entrega`), que a versão ChatGPT usava. Achado na primeira limpeza real.
+
 ## [0.6.1] - 2026-11-16
 
 Correção achada na inspeção visual do piloto.

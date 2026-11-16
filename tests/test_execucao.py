@@ -272,12 +272,13 @@ def test_envio_nao_solicitado():
 
 def test_versoes_antigas_do_kindle():
     """KIN-06."""
-    titulos = ["Skaravana_v13", "Skaravana_v14", "Skaravana_v01", "Xamego_v38", "Skaravana"]
+    titulos = ["Skaravana_v13", "Skaravana_v14_entrega", "Skaravana_v01", "Xamego_v38", "Skaravana"]
     # Numeração recomeçada (PDF-03): v14 da versão ChatGPT também é antigo.
     assert versoes_antigas("Skaravana", titulos, "Skaravana_v01") == [
         "Skaravana_v13",
-        "Skaravana_v14",
+        "Skaravana_v14_entrega",
     ]
+    assert versoes_antigas("Skaravana", ["Skaravanas_v02", "Skaravana_v1"], "Skaravana_v01") == []
 
 
 # --- Histórico e relatório -------------------------------------------------------------------
