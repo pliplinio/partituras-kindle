@@ -35,6 +35,21 @@ def uri(dados: bytes) -> str:
     return "data:image/png;base64," + base64.b64encode(dados).decode("ascii")
 
 
+# Tamanho de página do template de teste da Fanfateste, mais o mínimo do overlay.
+CSS = (
+    "@page{size:880px 650px;margin:0}html,body{margin:0;padding:0;background:#fff}"
+    "body{font-family:Arial,sans-serif}"
+    ".slide{width:880px;height:650px;box-sizing:border-box;overflow:hidden;"
+    "break-after:page;page-break-after:always}"
+    ".slide:last-child{break-after:auto;page-break-after:auto}"
+    ".setlist-native,.index-native{padding:40px 48px}"
+    ".score-image{width:100%;height:100%}"
+    ".score-overlay-v2{position:relative}"
+    ".score-overlay-v2 .score-image{position:absolute;inset:0}"
+    ".score-header-overlay{position:absolute;top:17px;left:0;right:0;height:18px}"
+    ".score-header-overlay a{position:absolute;transform:translateX(-50%);font-size:17px}"
+)
+
 MUSICAS_PADRAO = [
     ("Coisa Nº 5", 1),
     ("Garden of Love", 2),
@@ -98,8 +113,9 @@ def construir_html(
     if overlay:
         metas += '<meta content="score-overlay-header-v2" name="partituras-score-template"/>'
     texto = (
-        f"<!DOCTYPE html>\n<html><head>{metas}\n<style>\n.slide{{}}\n"
-        "/* score-native-layout-v1 */\n</style>\n</head>\n"
+        f"<!DOCTYPE html>\n<html><head>{metas}\n<style>\n{CSS}\n"
+        "/* score-native-layout-v1 */\n"
+        ".score-native{display:flex;flex-direction:column}\n</style>\n</head>\n"
         "<body><main>\n" + "\n".join(abertura + secoes) + "\n</main></body></html>\n"
     )
     doc = Documento(texto)

@@ -32,6 +32,7 @@ where = ["src"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-ra"
+markers = ["chromium: precisa do Chromium do Playwright para converter HTML em PDF"]
 
 [tool.ruff]
 line-length = 100

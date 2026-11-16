@@ -103,7 +103,7 @@ Para mudar uma regra: altere este arquivo, a matriz e os testes no mesmo PR.
 
 - [NOM-01] Preferir igualdade normalizada exata; aceitar diferenças inequívocas de capitalização, acentuação, pontuação, espaços, abreviações e pequenos erros.
 - [NOM-02] Em correspondência aproximada, registrar título procurado, melhor e segundo candidato com scores e a diferença.
-- [NOM-03] É ambíguo quando houver mais de uma opção plausível ou a diferença entre os dois melhores scores for menor que 0,08.
+- [NOM-03] É ambíguo quando houver mais de uma opção plausível ou a diferença entre os dois melhores scores for menor que 0,08. **(novo)** Também é ambíguo quando a melhor aproximação ficar entre 0,68 e 0,80: não está claro se é aquela música ou uma música sem partitura (ex.: "Mixolidio" × "Lidio", 0,714).
 - [NOM-04] Nenhuma ambiguidade é resolvida silenciosamente.
 - [NOM-05] Caso obrigatório de regressão: `Ska Paralamas` × `Skaravan`. Nunca escolher pela posição visual; priorizar a similaridade lexical e validar o destino individual.
 

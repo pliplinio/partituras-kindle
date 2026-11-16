@@ -17,6 +17,7 @@ from enum import StrEnum
 from partituras.dominio.erros import Ambiguidade
 
 LIMIAR_MINIMO = 0.68
+LIMIAR_SEGURO = 0.80
 DIFERENCA_MINIMA = 0.08
 SCORE_CONTIDO = 0.92
 
@@ -62,7 +63,9 @@ def similaridade(a: str, b: str) -> float:
         return 0.0
     if na == nb:
         return 1.0
-    if na in nb or nb in na:
+    # Abreviação: um nome contido no outro como palavras inteiras ("Reburial" em
+    # "The Reburial"). "Lidio" dentro de "Mixolidio" não conta.
+    if f" {na} " in f" {nb} " or f" {nb} " in f" {na} ":
         return SCORE_CONTIDO
     return difflib.SequenceMatcher(None, na, nb).ratio()
 
@@ -112,6 +115,7 @@ def corresponder(procurado: str, candidatos: Sequence[Candidato]) -> Corresponde
 
     - igualdade normalizada exata vence sempre, se for única;
     - abaixo de LIMIAR_MINIMO a música é ausente;
+    - entre LIMIAR_MINIMO e LIMIAR_SEGURO é ambiguidade (música ou ausente?);
     - diferença menor que DIFERENCA_MINIMA entre os dois melhores é ambiguidade.
 
     Levanta `Ambiguidade` em vez de escolher (NOM-04).
@@ -149,6 +153,11 @@ def corresponder(procurado: str, candidatos: Sequence[Candidato]) -> Corresponde
     if melhor_score < LIMIAR_MINIMO:
         return Correspondencia(
             procurado, Situacao.AUSENTE, None, melhor_score, melhor, segundo_score
+        )
+    if melhor_score < LIMIAR_SEGURO:
+        raise Ambiguidade(
+            f'"{procurado}" lembra "{melhor.titulo}" ({melhor_score:.3f}), mas a semelhança é '
+            f"baixa: pode ser essa música ou uma música sem partitura. Confirme o nome."
         )
     if segundo is not None and melhor_score - segundo_score < DIFERENCA_MINIMA:
         raise Ambiguidade(
