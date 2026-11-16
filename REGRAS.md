@@ -173,7 +173,7 @@ Para mudar uma regra: altere este arquivo, a matriz e os testes no mesmo PR.
 - [KIN-03] Usar o Gmail conectado quando o PDF couber no limite do conector; quando não couber (limite de 4,2 MB por chamada, cerca de 3,1 MB de anexo), usar o Gmail no navegador do app, inserindo o PDF do Drive como anexo, nunca como link.
 - [KIN-04] Antes de declarar bloqueio, tentar envio direto, depois rascunho e envio do rascunho, depois o caminho alternativo de KIN-03. Erro transitório de conector permite uma nova tentativa pelo mesmo caminho.
 - [KIN-05] Nunca trocar o anexo por link do Drive. Registrar cada tentativa, método e resultado.
-- [KIN-06] **(novo)** A Amazon não sobrescreve documentos de mesmo nome. Depois de um envio com sucesso, os outros documentos versionados da mesma fanfarra (inclusive os da versão ChatGPT, mesmo com número maior, por causa de PDF-03) podem ser apagados em lote na página "Gerencie seu conteúdo e dispositivos", sempre com confirmação prévia da lista pelo usuário.
+- [KIN-06] **(novo)** A Amazon não sobrescreve documentos de mesmo nome. Depois de um envio com sucesso, os outros documentos versionados da mesma fanfarra (inclusive os da versão ChatGPT, mesmo com número maior, por causa de PDF-03) (também com sufixo depois da versão, como `Xamego_v38_entrega`) podem ser apagados em lote na página "Gerencie seu conteúdo e dispositivos", sempre com confirmação prévia da lista pelo usuário.
 
 ## FLX — Fluxo e eficiência
 

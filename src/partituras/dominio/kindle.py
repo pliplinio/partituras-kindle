@@ -6,10 +6,9 @@ no navegador do app); aqui ficam as decisões e o registro.
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, field
 from enum import StrEnum
-
-from partituras.dominio.versoes import versao_do_pdf
 
 DESTINATARIO = "plinio.plinio_GuQd3r@kindle.com"
 LIMITE_CONECTOR_BYTES = 4_200_000
@@ -103,12 +102,11 @@ def versoes_antigas(fanfarra: str, titulos: list[str], enviado: str) -> list[str
     sugere; a exclusão exige confirmação do usuário.
     """
     atual = enviado.removesuffix(".pdf").casefold()
+    # Aceita sufixo depois da versão, como "Xamego_v38_entrega" da versão ChatGPT.
+    padrao = re.compile(rf"^{re.escape(fanfarra)}_v\d{{2,}}(?:[_ -].*)?$", re.I)
     antigas = []
     for titulo in titulos:
-        nome = titulo if titulo.lower().endswith(".pdf") else f"{titulo}.pdf"
-        if (
-            versao_do_pdf(nome, fanfarra) is not None
-            and titulo.removesuffix(".pdf").casefold() != atual
-        ):
+        base = titulo.removesuffix(".pdf")
+        if padrao.match(base) and base.casefold() != atual:
             antigas.append(titulo)
     return antigas
