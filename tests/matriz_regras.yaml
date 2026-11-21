@@ -72,6 +72,10 @@ regras:
     testes: 
       - test_html.py::test_edicao_nao_muda_versao_de_template
       - test_versoes.py::test_template_muda_so_em_alteracao_de_template
+  HTML-11:
+    etapa: 2
+    testes: 
+      - test_html.py::test_icone_da_aba_preservado_nas_edicoes
   EST-01:
     etapa: 2
     testes: 

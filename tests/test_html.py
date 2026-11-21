@@ -4,7 +4,7 @@ import hashlib
 import re
 
 import pytest
-from conftest import construir_html, png
+from conftest import construir_html, png, uri
 
 from partituras.dominio.erros import Ambiguidade, Inconsistencia
 from partituras.dominio.modelos import Papel
@@ -342,3 +342,20 @@ def test_troca_desempata_titulos_com_parenteses(imagens):
         doc, PedidoMusica("X", "Coração Partido (graus)", imagens((4, 4, 4))), True
     )
     assert rel.grupo == "coracao-partido-graus"
+
+
+def test_icone_da_aba_preservado_nas_edicoes(imagens):
+    """HTML-11: o ícone da aba sobrevive às edições e não muda a versão de template."""
+    icone = f'<link rel="icon" type="image/png" href="{uri(png((200, 50, 150), (16, 16)))}">'
+    dados = construir_html().replace(b"</head>", icone.encode() + b"</head>", 1)
+    doc = Documento.de_bytes(dados)
+    versao = doc.versao_template
+
+    novo, _ = gravar_musica(doc, PedidoMusica("X", "Simmer Down", imagens((7, 7, 7))), True)
+    novo, _ = gravar_musica(novo, PedidoMusica("X", "Nova", imagens((1, 1, 1))), False)
+    novo, _ = reconstruir_setlist(novo, ["Nova", "Skaravan"])
+    novo = reconstruir_indice(novo)
+
+    assert novo.texto.count(icone) == 1
+    assert novo.versao_template == versao
+    assert all(icone not in s.texto for s in novo.secoes)

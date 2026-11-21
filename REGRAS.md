@@ -32,6 +32,7 @@ Para mudar uma regra: altere este arquivo, a matriz e os testes no mesmo PR.
 - [HTML-08] Em alteração de conteúdo, o canônico é substituído no mesmo arquivo, preservando nome e ID no Drive.
 - [HTML-09] **(novo)** A edição preserva byte a byte tudo o que estiver fora da região alterada, inclusive quebras de linha (CRLF) e codificação.
 - [HTML-10] Rejeitar edição que mude a versão de template em alteração de conteúdo, e mudança de template sem incremento de versão.
+- [HTML-11] **(novo)** O HTML canônico pode declarar um ícone de aba do navegador em `<head>` (`<link rel="icon">` com a imagem incorporada como `data:image/...;base64,...`). Ele não aparece nas páginas nem no PDF. Incluí-lo ou trocá-lo é alteração de metadados (HTML-04) e não muda a versão de template; toda edição o preserva sem alteração.
 
 ## EST — Estrutura semântica do HTML
 
