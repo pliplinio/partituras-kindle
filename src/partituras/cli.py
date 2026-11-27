@@ -4,7 +4,7 @@ Fluxo de uma execução (o diretório de trabalho guarda o estado entre passos):
 
     partituras iniciar   --trabalho T [--pedido ISO] [--sem-envio]
     partituras preparar  --trabalho T --pasta P --fanfarra F
-    partituras gerar     --trabalho T [--setlist arquivo.txt]
+    partituras gerar     --trabalho T [--setlist arquivo.txt] [--musica M --imagens a.png ...]
     partituras substituir --trabalho T --pasta P --musica M --imagens a.png [b.png ...]
     partituras aprovar   --trabalho T --inspecionadas 1-5,9 [--achado 3:texto]
     partituras promover  --trabalho T --pasta P
@@ -65,6 +65,8 @@ def construir_parser() -> argparse.ArgumentParser:
 
     p = comando("gerar", "gera o PDF integral, com set list novo opcional")
     p.add_argument("--setlist", type=Path, help="arquivo de texto com o set list")
+    p.add_argument("--musica", help="música a trocar no mesmo candidato (com --imagens)")
+    p.add_argument("--imagens", type=Path, nargs="+", help="imagens da música, na ordem")
 
     p = comando("substituir", "troca uma música pelo caminho rápido", pasta=True)
     p.add_argument("--musica", required=True)
@@ -100,7 +102,7 @@ def executar_comando(args: argparse.Namespace) -> object:
         return plano.como_dict()
     if args.comando == "gerar":
         texto = args.setlist.read_text(encoding="utf-8") if args.setlist else None
-        return _resumo(executar.gerar(estado, texto))
+        return _resumo(executar.gerar(estado, texto, musica=args.musica, imagens=args.imagens))
     if args.comando == "substituir":
         dados = executar.substituir_musica(
             estado, args.musica, args.imagens, PastaLocal(args.pasta)
@@ -124,7 +126,7 @@ def executar_comando(args: argparse.Namespace) -> object:
 def _resumo(dados: dict) -> dict:
     chaves = (
         "operacao", "candidato", "candidato_sha256", "metodo_pdf", "motivo_integral",
-        "paginas_para_inspecao", "alertas", "inspecao", "setlist", "erro",
+        "paginas_para_inspecao", "alertas", "inspecao", "setlist", "nominal", "erro",
     )  # fmt: skip
     return {k: dados[k] for k in chaves if k in dados}
 

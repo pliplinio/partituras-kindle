@@ -31,10 +31,15 @@ shell do dispositivo; ela é lida e gravada pelas ferramentas de arquivo do disp
 1. `partituras iniciar --trabalho T [--pedido <horário do pedido>] [--sem-envio]`, antes de
    qualquer leitura da pasta (TMP-01).
 2. Trazer da pasta, com `device_stage_files`, o HTML da fanfarra, os PDFs dela e
-   `automacao/manifestos/<último PDF>.manifest.json`, e montar o espelho em
-   `/mnt/user-data/outputs/partituras_claude` com esses mesmos nomes. Uma listagem só (FLX-01).
+   `automacao/manifestos/<último PDF>.manifest.json`, e montar o espelho em disco local
+   (`/home/claude/espelho/partituras_claude`) com esses mesmos nomes. Uma listagem só (FLX-01).
+   Não usar `/mnt/user-data/outputs` como espelho: é rclone, troca o ID do arquivo a cada
+   gravação e o `promover` bloqueia por HTML-08. Os arquivos a gravar com `device_commit_files`
+   são copiados para `/mnt/user-data/outputs/entrega`.
 3. `partituras preparar --trabalho T --pasta <espelho> --fanfarra <Nome>`.
 4. Set list novo ou geração integral: `partituras gerar --trabalho T [--setlist arquivo.txt]`.
+   Troca de música com set list novo: `partituras gerar --trabalho T --setlist arquivo.txt
+   --musica "<Nome>" --imagens <png...>` (um só candidato, PDF-12).
    Troca de música: `partituras substituir --trabalho T --pasta <espelho> --musica "<Nome>"
    --imagens <png...>`.
 5. Inspecionar de verdade as páginas em `T/renders` (folhas de até 6 páginas; página com

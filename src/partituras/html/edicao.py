@@ -26,6 +26,7 @@ from partituras.html.overlay import posicoes
 
 _DATA_URI = re.compile(r'src=["\']data:image/[^;]+;base64,([^"\']+)["\']', re.I | re.S)
 _CSS_SCORE_NATIVE = "/* score-native-layout-v1 */"
+_REGRA_SCORE_NATIVE = re.compile(r"(?<![\w-])\.score-native\s*\{")
 
 
 def sha256(dados: bytes) -> str:
@@ -196,7 +197,9 @@ def _proximos_ids(doc: Documento, quantidade: int, reservados: Sequence[str]) ->
 
 
 def _garantir_css_score_native(doc: Documento) -> Documento:
-    if _CSS_SCORE_NATIVE in doc.texto:
+    """Inclui o CSS mínimo da página raw-score só quando o HTML ainda não tem uma regra
+    `.score-native{...}` (com ou sem o comentário-marcador); nunca duplica (VAL-04)."""
+    if _CSS_SCORE_NATIVE in doc.texto or _REGRA_SCORE_NATIVE.search(doc.texto):
         return doc
     nl = doc.quebra_de_linha
     css = (

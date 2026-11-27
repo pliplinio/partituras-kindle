@@ -132,3 +132,44 @@ def test_inclusao_so_por_palavras_inteiras():
     assert similaridade("Mixolidio", "Lidio") < 0.92
     with pytest.raises(Ambiguidade, match="Confirme"):
         corresponder("Mixolidio", [Candidato("lidio", "Lidio"), Candidato("jonia", "Jonia")])
+
+
+ROCK = [
+    Candidato("i-love-rock-n-roll", "I love rock ’n’ roll"),
+    Candidato("somebody-told-the-killers", "Somebody told - The Killers"),
+    Candidato("take-me-out-franz", "Take me out - Franz"),
+    Candidato("the-kids-offspring", "The kids - Offspring"),
+    Candidato("all-the-small-things", "All the small things"),
+]
+
+
+@pytest.mark.parametrize(
+    ("procurado", "esperado"),
+    [
+        ("THE KILLERS - Somebody Told Me (+ Mr. Brightside)", "somebody-told-the-killers"),
+        ("FRANZ FERDINAND - Take Me Out", "take-me-out-franz"),
+        ("THE OFFSPRING - The Kids Aren’t Alright", "the-kids-offspring"),
+        ("JOAN JETT + QUEEN - I Love Rock & Roll + We Will Rock You", "i-love-rock-n-roll"),
+    ],
+)
+def test_palavras_em_outra_ordem(procurado, esperado):
+    """NOM-01: artista antes ou depois do título; "'n'", "&" e "and" se equivalem."""
+    c = corresponder(procurado, ROCK)
+    assert c.situacao is Situacao.APROXIMADA
+    assert c.escolhido.chave == esperado
+    assert c.diferenca >= 0.08
+
+
+def test_palavras_em_outra_ordem_nao_basta_parte_das_palavras():
+    """Só conta quando todas as palavras de um dos nomes estão no outro."""
+    assert similaridade("Take me home", "Take me out - Franz") < 0.92
+    assert similaridade("Mixolidio", "Lidio") < 0.92
+
+
+def test_palavras_em_outra_ordem_em_dois_candidatos_e_ambiguo():
+    """NOM-04: duas músicas contidas no mesmo item não são escolhidas em silêncio."""
+    with pytest.raises(Ambiguidade):
+        corresponder(
+            "Green Day - Medley + Basket Case",
+            [Candidato("green-day", "Green Day"), Candidato("basket-case", "Basket Case")],
+        )
