@@ -277,6 +277,8 @@ regras:
   NOM-01:
     etapa: 2
     testes: 
+      - test_nomes.py::test_palavras_em_outra_ordem
+      - test_nomes.py::test_palavras_em_outra_ordem_nao_basta_parte_das_palavras
       - test_nomes.py::test_aceita_diferencas_inequivocas
       - test_nomes.py::test_igualdade_normalizada_vence
       - test_nomes.py::test_inclusao_so_por_palavras_inteiras
@@ -292,6 +294,7 @@ regras:
   NOM-04:
     etapa: 2
     testes: 
+      - test_nomes.py::test_palavras_em_outra_ordem_em_dois_candidatos_e_ambiguo
       - test_html.py::test_setlist_ambiguo_interrompe
       - test_nomes.py::test_diferenca_menor_que_008_e_ambigua
       - test_nomes.py::test_dois_exatos_iguais_sao_ambiguos
@@ -351,6 +354,8 @@ regras:
   PDF-12:
     etapa: 4
     testes: 
+      - test_golden.py::test_troca_de_musica_e_set_list_num_so_candidato
+      - test_golden.py::test_troca_de_musica_no_gerar_exige_imagens
       - test_golden.py::test_mudanca_de_partes_cai_para_geracao_integral
   LNK-01:
     etapa: 3
@@ -404,6 +409,7 @@ regras:
   VAL-04:
     etapa: 4
     testes: 
+      - test_html.py::test_css_raw_score_existente_sem_marcador_nao_duplica
       - test_golden.py::test_escopo_bloqueia_mudanca_fora_do_grupo
   VAL-05:
     etapa: 4

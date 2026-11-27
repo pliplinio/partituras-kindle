@@ -102,7 +102,7 @@ Para mudar uma regra: altere este arquivo, a matriz e os testes no mesmo PR.
 
 ## NOM — Correspondência de nomes
 
-- [NOM-01] Preferir igualdade normalizada exata; aceitar diferenças inequívocas de capitalização, acentuação, pontuação, espaços, abreviações e pequenos erros.
+- [NOM-01] Preferir igualdade normalizada exata; aceitar diferenças inequívocas de capitalização, acentuação, pontuação, espaços, abreviações e pequenos erros. **(novo)** Palavras em outra ordem contam como nome contido (score 0,92) quando todas as palavras de um dos nomes estão no outro, ignorando os conectivos "'n'" e "and" (ex.: "THE KILLERS - Somebody Told Me" × "Somebody told - The Killers").
 - [NOM-02] Em correspondência aproximada, registrar título procurado, melhor e segundo candidato com scores e a diferença.
 - [NOM-03] É ambíguo quando houver mais de uma opção plausível ou a diferença entre os dois melhores scores for menor que 0,08. **(novo)** Também é ambíguo quando a melhor aproximação ficar entre 0,68 e 0,80: não está claro se é aquela música ou uma música sem partitura (ex.: "Mixolidio" × "Lidio", 0,714).
 - [NOM-04] Nenhuma ambiguidade é resolvida silenciosamente.
@@ -121,7 +121,7 @@ Para mudar uma regra: altere este arquivo, a matriz e os testes no mesmo PR.
 - [PDF-09] Geração e validação usam o mesmo plano semântico.
 - [PDF-10] O candidato é gravado como `.candidate.pdf`, reaberto e validado; se a validação falhar, é descartado e nenhum nome final é criado.
 - [PDF-11] Substituição simples de música com a mesma quantidade de partes, sem mudar template, set list nem índice, usa preferencialmente patch incremental sobre o PDF anterior aprovado (SHA-256 conferido), trocando só a imagem das páginas alvo em todas as ocorrências.
-- [PDF-12] Se a quantidade de partes mudar, houver inclusão ou remoção de páginas, mudança de template ou falha do patch, usar a geração integral. O relatório indica `incremental_pdf_patch` ou o motivo do fallback.
+- [PDF-12] Se a quantidade de partes mudar, houver inclusão ou remoção de páginas, mudança de template ou falha do patch, usar a geração integral. O relatório indica `incremental_pdf_patch` ou o motivo do fallback. **(novo)** Troca de música junto com set list novo é um único candidato integral, com o gate nominal de VAL-05 (`gerar --setlist --musica --imagens`).
 
 ## LNK — Links
 

@@ -3,6 +3,23 @@
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/);
 versões seguem [SemVer](https://semver.org/lang/pt-BR/).
 
+## [0.7.0] - 2026-11-27
+
+Achados na primeira troca de música com set list novo no Fanfarock.
+
+### Adicionado
+
+- PDF-12: `partituras gerar --setlist arquivo.txt --musica "<Nome>" --imagens ...` troca a
+  música e aplica o set list novo num único candidato integral, com o gate nominal (VAL-05).
+- NOM-01: palavras em outra ordem contam como nome contido ("THE KILLERS - Somebody Told Me"
+  × "Somebody told - The Killers"; "Rock & Roll" × "rock 'n' roll"). Duas músicas contidas no
+  mesmo item continuam ambíguas (NOM-04).
+
+### Corrigido
+
+- VAL-04: a troca de música num HTML que já tem a regra `.score-native{...}` sem o
+  comentário-marcador (caso do Fanfarock) duplicava o CSS e reprovava no gate de escopo.
+
 ## [0.6.2] - 2026-11-16
 
 ### Corrigido

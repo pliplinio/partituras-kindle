@@ -35,6 +35,8 @@ shell do dispositivo; ela é lida e gravada pelas ferramentas de arquivo do disp
    `/mnt/user-data/outputs/partituras_claude` com esses mesmos nomes. Uma listagem só (FLX-01).
 3. `partituras preparar --trabalho T --pasta <espelho> --fanfarra <Nome>`.
 4. Set list novo ou geração integral: `partituras gerar --trabalho T [--setlist arquivo.txt]`.
+   Troca de música com set list novo: `partituras gerar --trabalho T --setlist arquivo.txt
+   --musica "<Nome>" --imagens <png...>` (um só candidato, PDF-12).
    Troca de música: `partituras substituir --trabalho T --pasta <espelho> --musica "<Nome>"
    --imagens <png...>`.
 5. Inspecionar de verdade as páginas em `T/renders` (folhas de até 6 páginas; página com

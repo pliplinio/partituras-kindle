@@ -34,14 +34,20 @@ from partituras.dominio.relatorio import estados_finais, montar, registro_histor
 from partituras.dominio.setlist import ler_texto
 from partituras.dominio.tempo import Cronometro
 from partituras.html.documento import Documento
-from partituras.html.edicao import PedidoMusica, reconstruir_setlist
+from partituras.html.edicao import PedidoMusica, gravar_musica, reconstruir_setlist
 from partituras.pdf.fingerprint import (
     carregar_manifesto_aprovado,
     delta,
     manifesto,
     manifesto_aprovado,
 )
-from partituras.pdf.inspecao import folhas_de_contato, pre_validar, registrar_inspecao, renderizar
+from partituras.pdf.inspecao import (
+    folhas_de_contato,
+    gate_nominal,
+    pre_validar,
+    registrar_inspecao,
+    renderizar,
+)
 from partituras.version import __version__
 
 ESTADO = "estado.json"
@@ -194,21 +200,60 @@ def _depois_do_candidato(estado: Estado, candidato: Path, html: bytes, d, alerta
     )
 
 
-def gerar(estado: Estado, setlist_texto: str | None = None, conversor=None) -> dict:
-    """Geração integral, com novo set list opcional (PDF-05)."""
+def gerar(
+    estado: Estado,
+    setlist_texto: str | None = None,
+    conversor=None,
+    musica: str | None = None,
+    imagens: list[Path] | None = None,
+) -> dict:
+    """Geração integral, com novo set list e troca de música opcionais (PDF-05, PDF-12).
+
+    Com `musica` e `imagens`, a música é trocada no mesmo HTML candidato antes do set
+    list, e o PDF sai num único candidato integral, com o gate nominal (VAL-05).
+    """
+    if (musica is None) != (not imagens):
+        raise Inconsistencia("troca de música exige o nome e as imagens juntos")
     plano = _plano(estado)
     html = (estado.trabalho / "original.html").read_bytes()
     with estado.etapa("pdf"):
-        estado.dados["operacao"] = "setlist" if setlist_texto else "geracao_integral"
+        operacoes = (["substituicao_musica"] if musica else []) + (
+            ["setlist"] if setlist_texto is not None else []
+        )
+        estado.dados["operacao"] = "+".join(operacoes) or "geracao_integral"
+        edicao = None
+        if musica:
+            pedido = PedidoMusica(plano["fanfarra"], musica, tuple(imagens))
+            doc, edicao = gravar_musica(Documento.de_bytes(html), pedido, substituir=True)
+            html = doc.para_bytes()
+            estado.cronometro.contar("edicoes_html")
+            estado.dados.update(
+                musica=edicao.musica,
+                imagens=", ".join(p.name for p in imagens),
+                metodo_pdf="geracao_integral",
+                motivo_integral=(
+                    "set list novo junto com a troca de música"
+                    if setlist_texto is not None
+                    else "troca de música pedida como geração integral"
+                ),
+            )
         if setlist_texto is not None:
             titulos = [linha.titulo for linha in ler_texto(setlist_texto)]
             doc, rel = reconstruir_setlist(Documento.de_bytes(html), titulos)
             html = doc.para_bytes()
-            estado.cronometro.contar("edicoes_html")
+            if not musica:
+                estado.cronometro.contar("edicoes_html")
             estado.dados["setlist"] = (
                 f"{rel.itens} itens, {rel.links} links, {len(rel.ausentes)} sem partitura"
             )
+            estado.dados["setlist_correspondencias"] = rel.correspondencias
         r = gerar_candidato(html, estado.trabalho, plano["nome_pdf"], conversor)
+        if edicao is not None:
+            try:
+                estado.dados["nominal"] = gate_nominal(r.candidato, r.plano, edicao.grupo)
+            except Exception:
+                r.candidato.unlink(missing_ok=True)
+                raise
         m = manifesto(r.candidato)
         d = delta(m, _anterior(estado))
         alertas = pre_validar(r.candidato, r.plano)

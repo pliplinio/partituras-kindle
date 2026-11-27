@@ -483,6 +483,42 @@ def test_fluxo_completo_pelo_cli(estados, tmp_path, capsys):
     assert len(list((pasta / "automacao/relatorios").iterdir())) == 2
 
 
+def test_troca_de_musica_e_set_list_num_so_candidato(estados, tmp_path):
+    """PDF-12: troca de música com set list novo gera um único candidato integral, com o
+    gate nominal da música (VAL-05) e o set list ligado por nome (SET-03)."""
+    pasta = tmp_path / "partituras_claude"
+    pasta.mkdir()
+    (pasta / "Fanfateste.html").write_bytes(estados["04_Lidio"].para_bytes())
+    setlist = tmp_path / "setlist.txt"
+    setlist.write_text("01 - Lidio\n02 - Jonia\n\n03 - Sem Partitura\n", encoding="utf-8")
+    t = tmp_path / "exec"
+    _cli("iniciar", "--trabalho", t)
+    _cli("preparar", "--trabalho", t, "--pasta", pasta, "--fanfarra", "Fanfateste")
+    imagens = (ENTRADA / "Doria (1 de 2).png", ENTRADA / "Lidio.png")
+    assert _cli("gerar", "--trabalho", t, "--setlist", setlist, "--musica", "Lidio",
+                "--imagens", *imagens) == 0  # fmt: skip
+    estado = executar.Estado.abrir(t)
+    assert estado.dados["operacao"] == "substituicao_musica+setlist"
+    assert estado.dados["metodo_pdf"] == "geracao_integral"
+    assert estado.dados["nominal"]["partes_encontradas"] == [1, 2]
+    assert estado.dados["setlist"] == "3 itens, 2 links, 1 sem partitura"
+    assert estado.cronometro.contadores["edicoes_html"] == 1
+    assert estado.cronometro.contadores["pdfs_candidatos"] == 1
+    html = Documento.de_bytes((t / "candidato.html").read_bytes())
+    assert [i.grupo for i in html.repertorio().setlist] == ["lidio", "jonia", None]
+    assert len(html.repertorio().musica("lidio").paginas) == 2
+
+
+def test_troca_de_musica_no_gerar_exige_imagens(estados, tmp_path):
+    pasta = tmp_path / "partituras_claude"
+    pasta.mkdir()
+    (pasta / "Fanfateste.html").write_bytes(estados["04_Lidio"].para_bytes())
+    t = tmp_path / "exec"
+    _cli("iniciar", "--trabalho", t)
+    _cli("preparar", "--trabalho", t, "--pasta", pasta, "--fanfarra", "Fanfateste")
+    assert _cli("gerar", "--trabalho", t, "--musica", "Lidio") == 2
+
+
 def test_inspecao_reprovada_nao_promove(estados, tmp_path, capsys):
     """INS-07, PRO-01: achado na inspeção encerra com falha e sem gravar nada."""
     pasta = tmp_path / "partituras_claude"

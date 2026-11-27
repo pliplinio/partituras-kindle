@@ -20,6 +20,8 @@ LIMIAR_MINIMO = 0.68
 LIMIAR_SEGURO = 0.80
 DIFERENCA_MINIMA = 0.08
 SCORE_CONTIDO = 0.92
+# Conectivos que mudam de grafia entre fontes ("rock 'n' roll", "rock & roll", "rock and roll").
+_CONECTIVOS = frozenset({"n", "and"})
 
 
 def sem_acentos(texto: str) -> str:
@@ -66,6 +68,12 @@ def similaridade(a: str, b: str) -> float:
     # Abreviação: um nome contido no outro como palavras inteiras ("Reburial" em
     # "The Reburial"). "Lidio" dentro de "Mixolidio" não conta.
     if f" {na} " in f" {nb} " or f" {nb} " in f" {na} ":
+        return SCORE_CONTIDO
+    # Mesmas palavras em outra ordem ("THE KILLERS - Somebody Told Me" e
+    # "Somebody told - The Killers"): todas as palavras de um nome aparecem no
+    # outro, ignorando conectivos. Palavras inteiras, como acima.
+    pa, pb = set(na.split()) - _CONECTIVOS, set(nb.split()) - _CONECTIVOS
+    if pa and pb and (pa <= pb or pb <= pa):
         return SCORE_CONTIDO
     return difflib.SequenceMatcher(None, na, nb).ratio()
 

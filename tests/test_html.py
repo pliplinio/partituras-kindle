@@ -8,6 +8,7 @@ from conftest import construir_html, png
 
 from partituras.dominio.erros import Ambiguidade, Inconsistencia
 from partituras.dominio.modelos import Papel
+from partituras.html import escopo
 from partituras.html.documento import Documento
 from partituras.html.edicao import (
     PedidoMusica,
@@ -320,13 +321,30 @@ def test_grupo_nao_contiguo_bloqueia_edicao(imagens):
 
 def test_css_da_pagina_raw_score_incluido_quando_falta(imagens):
     """O CSS mínimo da página raw-score entra uma vez, seguindo a quebra de linha do arquivo."""
-    dados = construir_html(quebra="\r\n").replace(b"/* score-native-layout-v1 */\r\n", b"")
+    dados = construir_html(quebra="\r\n").replace(
+        b"/* score-native-layout-v1 */\r\n.score-native{display:flex;flex-direction:column}\r\n",
+        b"",
+    )
     doc = Documento.de_bytes(dados)
+    assert ".score-native{" not in doc.texto
     novo, _ = gravar_musica(doc, PedidoMusica("X", "Nova", imagens((1, 1, 1))), False)
     assert novo.texto.count("/* score-native-layout-v1 */") == 1
     novo2, _ = gravar_musica(novo, PedidoMusica("X", "Outra", imagens((2, 2, 2))), False)
     assert novo2.texto.count("/* score-native-layout-v1 */") == 1
     assert novo2.para_bytes().count(b"\n") == novo2.para_bytes().count(b"\r\n")
+
+
+def test_css_raw_score_existente_sem_marcador_nao_duplica(imagens):
+    """VAL-04: HTML que já tem a regra `.score-native{...}` sem o comentário-marcador
+    (caso do Fanfarock) não ganha cópia do CSS; o <head> fica igual e o gate de escopo passa."""
+    dados = construir_html(quebra="\r\n").replace(b"/* score-native-layout-v1 */\r\n", b"")
+    doc = Documento.de_bytes(dados)
+    assert ".score-native{" in doc.texto.replace(" ", "")
+    cabeca = doc.texto[: doc.texto.lower().find("</head>")]
+    novo, rel = gravar_musica(doc, PedidoMusica("X", "Simmer Down", imagens((3, 3, 3))), True)
+    assert novo.texto[: novo.texto.lower().find("</head>")] == cabeca
+    assert "/* score-native-layout-v1 */" not in novo.texto
+    escopo.exigir(doc, novo, rel.grupo)
 
 
 def test_troca_desempata_titulos_com_parenteses(imagens):
