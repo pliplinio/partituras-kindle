@@ -126,7 +126,8 @@ def executar_comando(args: argparse.Namespace) -> object:
 def _resumo(dados: dict) -> dict:
     chaves = (
         "operacao", "candidato", "candidato_sha256", "metodo_pdf", "motivo_integral",
-        "paginas_para_inspecao", "alertas", "inspecao", "setlist", "nominal", "erro",
+        "paginas_para_inspecao", "alertas", "inspecao", "setlist", "nominal", "html_reordenado",
+        "erro",
     )  # fmt: skip
     return {k: dados[k] for k in chaves if k in dados}
 

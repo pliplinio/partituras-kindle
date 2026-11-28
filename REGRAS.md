@@ -53,7 +53,7 @@ Para mudar uma regra: altere este arquivo, a matriz e os testes no mesmo PR.
 
 - [MUS-01] A entrada é: fanfarra, nome da música e uma ou mais imagens na ordem das partes.
 - [MUS-02] A música é identificada pelo título normalizado e/ou `data-group`.
-- [MUS-03] Alteração substitui o grupo completo da música; inclusão insere um grupo novo sem remover nenhum existente.
+- [MUS-03] Alteração substitui o grupo completo da música; inclusão insere um grupo novo sem remover nenhum existente, na posição definida por SET-10.
 - [MUS-04] Somente o grupo selecionado pode mudar. Se as páginas do grupo não forem contíguas ou a identificação for ambígua, a alteração é bloqueada.
 - [MUS-05] IDs existentes são preservados sempre que possível; IDs novos são únicos.
 - [MUS-06] As imagens são incorporadas como `data:image/...;base64,...`.
@@ -92,6 +92,8 @@ Para mudar uma regra: altere este arquivo, a matriz e os testes no mesmo PR.
 - [SET-07] A entrada textual aceita listas numeradas, marcadores, travessões, uma música por linha, blocos e bis; ignora apenas cabeçalhos, datas, locais, horários, seções, observações e resíduos de layout inequívocos.
 - [SET-08] Sem set list: página 1 = índice, repertório na ordem canônica do HTML, sem inventar set list.
 - [SET-09] Música do set list sem partitura fica visível como texto, sem link, sem página criada e sem substituição por outra música; é registrada como ausente e não é erro estrutural.
+- [SET-10] **(novo)** Com set list, as páginas do HTML canônico ficam na ordem do set list: set list, índice, as músicas na ordem da primeira ocorrência no set list, depois as músicas fora do set list na ordem em que já estavam e, por fim, as páginas auxiliares. Música repetida no set list não duplica páginas no HTML (a duplicação é só no PDF, SET-05). Toda reconstrução do set list, inclusão ou troca de música e geração integral deixa o HTML nessa ordem. A reordenação move só páginas inteiras, sem mudar IDs, links nem os bytes fora delas (HTML-09), e é alteração de conteúdo (HTML-04).
+- [SET-11] **(novo)** HTML fora da ordem de SET-10 não gera plano nem PDF: o gate reprova antes da conversão.
 
 ## PRES — Preservação
 
@@ -139,7 +141,7 @@ Para mudar uma regra: altere este arquivo, a matriz e os testes no mesmo PR.
 - [VAL-01] Antes de qualquer inspeção visual, o gate estrutural deriva de novo o plano a partir do HTML e reprova o PDF em qualquer divergência.
 - [VAL-02] O gate estrutural verifica: páginas reais × esperadas, preservação, sequência do set list, repetições, multipáginas, links do set list, do índice e de retorno, correspondência individual item → ocorrência, índice em 3 colunas, título/parte de cada página, ausência de links externos e de destinos inválidos, e integridade do arquivo.
 - [VAL-03] O validador associa cada rótulo físico do índice ao destino por correspondência exata ou inequívoca, independente do algoritmo que criou os links.
-- [VAL-04] Gate de escopo do HTML em substituição simples: grupos não alvo inalterados e na mesma ordem; CSS e template iguais; set list com mesmas posições, títulos e grupos; índice com o mesmo conjunto; grupo alvo presente; nenhuma inserção, remoção ou reordenação de grupos não relacionados.
+- [VAL-04] Gate de escopo do HTML em substituição simples, comparando com o HTML já posto na ordem de SET-10: grupos não alvo inalterados e na mesma ordem; CSS e template iguais; set list com mesmas posições, títulos e grupos; índice com o mesmo conjunto; grupo alvo presente; nenhuma inserção, remoção ou reordenação de grupos não relacionados.
 - [VAL-05] Gate nominal da música alterada, antes da inspeção: título, todas as partes `1..N`, páginas encontradas e SHA-256 do candidato.
 - [VAL-06] Validações da edição de HTML: IDs únicos, título e grupo corretos, partes consistentes, imagens incorporadas, área da imagem conforme o template, grupo consecutivo, índice regenerado, versão de template mantida.
 - [VAL-07] Modo estrito sempre: reprovar estrutura não interpretada, índice ausente, ambiguidade, exclusão indevida, multipágina inconsistente, ordem errada, repetição não duplicada, link incorreto ou externo, total divergente, tentativa de sobrescrita, erro de versão de template, falha de renderização, inspeção obrigatória não feita ou saída corrompida.

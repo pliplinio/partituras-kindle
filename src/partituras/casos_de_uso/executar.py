@@ -34,7 +34,12 @@ from partituras.dominio.relatorio import estados_finais, montar, registro_histor
 from partituras.dominio.setlist import ler_texto
 from partituras.dominio.tempo import Cronometro
 from partituras.html.documento import Documento
-from partituras.html.edicao import PedidoMusica, gravar_musica, reconstruir_setlist
+from partituras.html.edicao import (
+    PedidoMusica,
+    gravar_musica,
+    ordenar_pelo_setlist,
+    reconstruir_setlist,
+)
 from partituras.pdf.fingerprint import (
     carregar_manifesto_aprovado,
     delta,
@@ -247,6 +252,14 @@ def gerar(
                 f"{rel.itens} itens, {rel.links} links, {len(rel.ausentes)} sem partitura"
             )
             estado.dados["setlist_correspondencias"] = rel.correspondencias
+        # SET-10: o HTML sai sempre na ordem do set list, mesmo sem outra edição.
+        ordenado = ordenar_pelo_setlist(Documento.de_bytes(html)).para_bytes()
+        estado.dados["html_reordenado"] = ordenado != html
+        if ordenado != html:
+            html = ordenado
+            if not operacoes:
+                estado.dados["operacao"] = "ordem_setlist"
+                estado.cronometro.contar("edicoes_html")
         r = gerar_candidato(html, estado.trabalho, plano["nome_pdf"], conversor)
         if edicao is not None:
             try:
@@ -300,6 +313,7 @@ def substituir_musica(estado: Estado, musica: str, imagens: list[Path], pasta: P
             motivo_integral=r.motivo_integral,
             imagens=", ".join(p.name for p in imagens),
             escopo="aprovado",
+            html_reordenado=r.reordenado,
             nominal=r.nominal,
             tempo_nucleo_s=round(sum(r.tempos.values()), 3),
         )

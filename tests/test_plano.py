@@ -104,3 +104,12 @@ def test_relatorio_pre_geracao():
     assert rel["repeticoes"] == ["garden-of-love"]
     assert rel["multipaginas"] == ["garden-of-love"]
     assert rel["total_esperado"] == len(plano.paginas) == len(rel["sequencia"])
+
+
+def test_html_fora_da_ordem_do_setlist_bloqueia_o_plano():
+    """SET-11: nenhum PDF sai de um HTML fora da ordem do set list."""
+    doc = Documento.de_bytes(construir_html(ordenar=False))
+    with pytest.raises(Inconsistencia, match="SET-10"):
+        planejar(doc.repertorio())
+    ordenado, _ = reconstruir_setlist(doc)
+    assert planejar(ordenado.repertorio()).paginas

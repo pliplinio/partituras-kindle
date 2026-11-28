@@ -25,7 +25,12 @@ from partituras.casos_de_uso.gerar_pdf import gerar_candidato, nome_candidato
 from partituras.dominio.plano import planejar
 from partituras.html import escopo
 from partituras.html.documento import Documento
-from partituras.html.edicao import PedidoMusica, RelatorioMusica, gravar_musica
+from partituras.html.edicao import (
+    PedidoMusica,
+    RelatorioMusica,
+    gravar_musica,
+    ordenar_pelo_setlist,
+)
 from partituras.pdf import patch
 from partituras.pdf.conversao import Conversor
 from partituras.pdf.fingerprint import Delta, carregar_manifesto_aprovado, delta, manifesto
@@ -57,6 +62,7 @@ class ResultadoSubstituicao:
     renders: list[Path]
     folhas: list[Path]
     tempos: dict[str, float] = field(default_factory=dict)
+    reordenado: bool = False
 
 
 def substituir(
@@ -70,7 +76,10 @@ def substituir(
     tempos: dict[str, float] = {}
     t = time.perf_counter()
 
-    antes = Documento.de_bytes(html)
+    original = Documento.de_bytes(html)
+    # SET-10: um HTML fora da ordem do set list é reordenado antes da troca; o gate de
+    # escopo compara com o HTML já ordenado, e a ordem final do PDF não muda.
+    antes = ordenar_pelo_setlist(original)
     depois, edicao = gravar_musica(antes, pedido, substituir=True)
     escopo.exigir(antes, depois, edicao.grupo)
     plano = planejar(depois.repertorio())
@@ -129,6 +138,7 @@ def substituir(
         renders=renders,
         folhas=folhas,
         tempos=tempos,
+        reordenado=antes.texto != original.texto,
     )
 
 

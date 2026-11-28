@@ -540,3 +540,44 @@ def test_inspecao_reprovada_nao_promove(estados, tmp_path, capsys):
         "STATUS FINAL: FALHA",
     ]
     assert sorted(p.name for p in pasta.iterdir()) == ["Fanfateste.html", "automacao"]
+
+
+def test_html_antigo_fora_de_ordem_e_reordenado(estados, tmp_path, capsys):
+    """SET-10 e SET-11: `gerar` e `substituir` deixam o HTML na ordem do set list; a troca
+    continua no patch incremental, porque a ordem do PDF não muda."""
+    fora, _ = reconstruir_setlist(estados["04_Lidio"], ["Lidio", "Jonia"], ordenar=False)
+    assert [m.grupo for m in fora.repertorio().musicas][0] == "jonia"
+    with pytest.raises(Inconsistencia, match="SET-10"):
+        planejar(fora.repertorio())
+    pasta = tmp_path / "partituras_claude"
+    pasta.mkdir()
+    (pasta / "Fanfateste.html").write_bytes(fora.para_bytes())
+
+    t1 = tmp_path / "exec1"
+    _cli("iniciar", "--trabalho", t1, "--sem-envio")
+    _cli("preparar", "--trabalho", t1, "--pasta", pasta, "--fanfarra", "Fanfateste")
+    assert _cli("gerar", "--trabalho", t1) == 0
+    estado = executar.Estado.abrir(t1)
+    assert estado.dados["operacao"] == "ordem_setlist"
+    assert estado.dados["html_reordenado"] is True
+    assert estado.cronometro.contadores["edicoes_html"] == 1
+    ordenado = Documento.de_bytes((t1 / "candidato.html").read_bytes())
+    assert [m.grupo for m in ordenado.repertorio().musicas] == ["lidio", "jonia", "doria", "frigia"]
+    _cli("aprovar", "--trabalho", t1, "--inspecionadas", "1-8")
+    assert _cli("promover", "--trabalho", t1, "--pasta", pasta) == 0
+    _cli("finalizar", "--trabalho", t1, "--pasta", pasta)
+    assert (pasta / "Fanfateste.html").read_bytes() == ordenado.para_bytes()
+
+    # Um HTML antigo volta para a pasta (mesmas páginas, fora da ordem) e recebe uma troca.
+    (pasta / "Fanfateste.html").write_bytes(fora.para_bytes())
+    t2 = tmp_path / "exec2"
+    _cli("iniciar", "--trabalho", t2, "--sem-envio")
+    _cli("preparar", "--trabalho", t2, "--pasta", pasta, "--fanfarra", "Fanfateste")
+    assert _cli("substituir", "--trabalho", t2, "--pasta", pasta, "--musica", "Jonia",
+                "--imagens", ENTRADA / "Lidio.png") == 0  # fmt: skip
+    estado = executar.Estado.abrir(t2)
+    assert estado.dados["html_reordenado"] is True
+    assert estado.dados["metodo_pdf"] == "incremental_pdf_patch"
+    novo = Documento.de_bytes((t2 / "candidato.html").read_bytes())
+    assert [m.grupo for m in novo.repertorio().musicas] == ["lidio", "jonia", "doria", "frigia"]
+    capsys.readouterr()

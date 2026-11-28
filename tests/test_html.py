@@ -14,6 +14,7 @@ from partituras.html.edicao import (
     PedidoMusica,
     gravar_musica,
     gravar_versao_template,
+    ordenar_pelo_setlist,
     reconstruir_indice,
     reconstruir_setlist,
     sha256_imagem_incorporada,
@@ -360,3 +361,85 @@ def test_troca_desempata_titulos_com_parenteses(imagens):
         doc, PedidoMusica("X", "Coração Partido (graus)", imagens((4, 4, 4))), True
     )
     assert rel.grupo == "coracao-partido-graus"
+
+
+# --- Ordem do set list (SET-10) ----------------------------------------------------------------
+
+
+def _ordem(doc: Documento) -> list[str]:
+    return [s.attrs.get("data-group") or s.attrs.get("id") for s in doc.secoes]
+
+
+def test_html_fica_na_ordem_do_setlist():
+    """SET-10: set list, índice, músicas do set list, as demais na ordem anterior, auxiliares."""
+    doc = Documento.de_bytes(construir_html(setlist=["Skaravan", "Garden of Love"], auxiliar=True))
+    assert _ordem(doc) == [
+        "setlist", "index",
+        "skaravan", "garden-of-love", "garden-of-love",
+        "coisa-no-5", "ska-paralamas", "simmer-down",
+        "slide-9",
+    ]  # fmt: skip
+    novo, _ = reconstruir_setlist(doc, ["Simmer Down", "Coisa Nº 5"])
+    assert _ordem(novo)[2:5] == ["simmer-down", "coisa-no-5", "skaravan"]
+    assert _ordem(novo)[-1] == "slide-9"
+
+
+def test_ordenar_html_antigo_so_move_paginas_inteiras():
+    """SET-10 e HTML-09: IDs, páginas e bytes fora delas não mudam; CRLF preservado."""
+    dados = construir_html(quebra="\r\n", auxiliar=True, ordenar=False)
+    antigo = Documento.de_bytes(dados)
+    assert _ordem(antigo)[2] == "coisa-no-5"
+    novo = ordenar_pelo_setlist(antigo)
+    assert _ordem(novo)[2:5] == ["garden-of-love", "garden-of-love", "ska-paralamas"]
+    assert sorted(s.texto for s in novo.secoes) == sorted(s.texto for s in antigo.secoes)
+    a, n = antigo.secoes, novo.secoes
+    assert antigo.texto[: a[0].inicio] == novo.texto[: n[0].inicio]
+    assert antigo.texto[a[-1].fim :] == novo.texto[n[-1].fim :]
+    assert novo.para_bytes().count(b"\n") == novo.para_bytes().count(b"\r\n")
+    assert novo.repertorio().setlist == antigo.repertorio().setlist
+    assert ordenar_pelo_setlist(novo).texto == novo.texto
+
+
+def test_ordem_com_repeticao_e_musica_sem_partitura():
+    """SET-10 com SET-05 e SET-09: páginas uma vez só, pela primeira ocorrência."""
+    doc = Documento.de_bytes(
+        construir_html(setlist=["Simmer Down", "Inédita", "Skaravan", "Simmer Down"])
+    )
+    assert _ordem(doc)[2:4] == ["simmer-down", "skaravan"]
+    assert _ordem(doc).count("simmer-down") == 1
+
+
+def test_sem_setlist_a_ordem_nao_muda():
+    """SET-08: sem set list não há ordem a impor."""
+    doc = Documento.de_bytes(construir_html(setlist=None))
+    assert ordenar_pelo_setlist(doc).texto == doc.texto
+
+
+def test_conteudo_entre_paginas_bloqueia_reordenacao():
+    """HTML-09: reordenar não pode carregar texto solto para outro lugar."""
+    dados = construir_html(ordenar=False).replace(
+        b'<section class="slide score-native', b'<p>solto</p><section class="slide score-native', 1
+    )
+    with pytest.raises(Inconsistencia, match="HTML-09"):
+        ordenar_pelo_setlist(Documento.de_bytes(dados))
+
+
+def test_inclusao_entra_na_posicao_do_setlist(imagens):
+    """SET-10 e MUS-03: música do set list que ganha partitura vai para a posição dela."""
+    doc = Documento.de_bytes(construir_html(setlist=["Skaravan", "Música Nova", "Simmer Down"]))
+    novo, _ = gravar_musica(
+        doc, PedidoMusica("X", "Música Nova", imagens((1, 2, 3))), substituir=False
+    )
+    assert _ordem(novo)[2:5] == ["skaravan", "musica-nova", "simmer-down"]
+    item = novo.itens_setlist()[1]
+    assert item.grupo == "musica-nova"
+
+
+def test_troca_em_html_fora_de_ordem_deixa_na_ordem(imagens):
+    """SET-10: a troca de música também corrige um HTML antigo fora da ordem."""
+    antigo = Documento.de_bytes(construir_html(ordenar=False))
+    novo, rel = gravar_musica(antigo, PedidoMusica("X", "Skaravan", imagens((5, 5, 5))), True)
+    assert _ordem(novo)[2:5] == ["garden-of-love", "garden-of-love", "ska-paralamas"]
+    assert rel.ids == ["slide-7"]
+    for id_ in ("slide-3", "slide-4", "slide-5", "slide-6", "slide-8"):
+        assert novo.secao_por_id(id_).texto == antigo.secao_por_id(id_).texto

@@ -13,6 +13,7 @@ from enum import StrEnum
 from partituras.dominio.erros import Inconsistencia
 from partituras.dominio.indice import EntradaIndice, entradas_indice
 from partituras.dominio.modelos import Papel, Repertorio
+from partituras.dominio.repertorio import problemas_ordem
 
 
 class Origem(StrEnum):
@@ -93,6 +94,9 @@ def planejar(repertorio: Repertorio) -> Plano:
         raise Inconsistencia("HTML sem páginas de partitura")
     if not repertorio.tem_indice:
         raise Inconsistencia("HTML sem índice; geração do PDF bloqueada (VAL-07)")
+    fora_de_ordem = problemas_ordem(repertorio)  # SET-11
+    if fora_de_ordem:
+        raise Inconsistencia("; ".join(fora_de_ordem))
     tem_setlist = repertorio.setlist is not None
     frente = [Papel.SETLIST, Papel.INDICE] if tem_setlist else [Papel.INDICE]
     if [p.papel for p in paginas[: len(frente)]] != frente:

@@ -66,7 +66,7 @@ regras:
     testes: 
       - test_html.py::test_leitura_e_gravacao_preservam_bytes
       - test_html.py::test_troca_preserva_bytes_fora_do_grupo_com_crlf
-      - test_html_reais.py::test_regenerar_sem_mudancas_nao_altera_bytes
+      - test_html_reais.py::test_regenerar_sem_mudancas_so_reordena
   HTML-10:
     etapa: 2
     testes: 
@@ -125,6 +125,7 @@ regras:
     testes: 
       - test_html.py::test_inclusao_adiciona_grupo_sem_remover_nenhum
       - test_html.py::test_troca_substitui_so_o_grupo_e_reaproveita_ids
+      - test_html.py::test_inclusao_entra_na_posicao_do_setlist
   MUS-04:
     etapa: 2
     testes: 
@@ -255,6 +256,22 @@ regras:
       - test_html.py::test_setlist_sem_partitura_fica_visivel_sem_link
       - test_plano.py::test_musica_sem_partitura_nao_cria_pagina
       - test_setlist_texto.py::test_musica_sem_partitura_fica_sem_grupo
+  SET-10:
+    etapa: 7
+    testes: 
+      - test_html.py::test_html_fica_na_ordem_do_setlist
+      - test_html.py::test_ordenar_html_antigo_so_move_paginas_inteiras
+      - test_html.py::test_ordem_com_repeticao_e_musica_sem_partitura
+      - test_html.py::test_sem_setlist_a_ordem_nao_muda
+      - test_html.py::test_conteudo_entre_paginas_bloqueia_reordenacao
+      - test_html.py::test_inclusao_entra_na_posicao_do_setlist
+      - test_html.py::test_troca_em_html_fora_de_ordem_deixa_na_ordem
+      - test_golden.py::test_html_antigo_fora_de_ordem_e_reordenado
+  SET-11:
+    etapa: 7
+    testes: 
+      - test_plano.py::test_html_fora_da_ordem_do_setlist_bloqueia_o_plano
+      - test_golden.py::test_html_antigo_fora_de_ordem_e_reordenado
   PRES-01:
     etapa: 3
     testes: 
@@ -411,6 +428,7 @@ regras:
     testes: 
       - test_html.py::test_css_raw_score_existente_sem_marcador_nao_duplica
       - test_golden.py::test_escopo_bloqueia_mudanca_fora_do_grupo
+      - test_golden.py::test_html_antigo_fora_de_ordem_e_reordenado
   VAL-05:
     etapa: 4
     testes: 

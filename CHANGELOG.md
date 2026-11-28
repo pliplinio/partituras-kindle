@@ -3,6 +3,27 @@
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/);
 versões seguem [SemVer](https://semver.org/lang/pt-BR/).
 
+## [0.8.0] - 2026-11-28
+
+Achado na Xamego: o set list ligava as músicas certas, mas as páginas do HTML seguiam a ordem
+antiga do repertório. A premissa do projeto é que as páginas fiquem na ordem do set list.
+
+### Adicionado
+
+- SET-10 (novo): o HTML canônico fica na ordem do set list (set list, índice, músicas do set
+  list pela primeira ocorrência, demais músicas, páginas auxiliares). A reconstrução do set
+  list, a inclusão e a troca de música e a geração integral reordenam o HTML; só páginas
+  inteiras se movem, sem mudar IDs, links nem bytes fora delas.
+- SET-11 (novo): o plano reprova HTML fora dessa ordem, de modo que nenhum PDF sai dele.
+- `gerar` sem set list novo também reordena um HTML antigo (operação `ordem_setlist`); o
+  relatório e o estado registram `html_reordenado`.
+
+### Alterado
+
+- MUS-03: a música incluída entra na posição do set list.
+- VAL-04: o gate de escopo da troca compara com o HTML já ordenado; a troca continua no patch
+  incremental, porque a ordem do PDF não muda.
+
 ## [0.7.0] - 2026-11-27
 
 Achados na primeira troca de música com set list novo no Fanfarock.
