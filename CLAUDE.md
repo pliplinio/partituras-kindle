@@ -38,6 +38,9 @@ shell do dispositivo; ela é lida e gravada pelas ferramentas de arquivo do disp
    são copiados para `/mnt/user-data/outputs/entrega`.
 3. `partituras preparar --trabalho T --pasta <espelho> --fanfarra <Nome>`.
 4. Set list novo ou geração integral: `partituras gerar --trabalho T [--setlist arquivo.txt]`.
+   Todo passo que edita o HTML deixa as páginas na ordem do set list (SET-10), e o plano
+   reprova HTML fora dela (SET-11). Para só reordenar um HTML antigo, rodar `gerar` sem
+   `--setlist`; o resumo mostra `html_reordenado`.
    Troca de música com set list novo: `partituras gerar --trabalho T --setlist arquivo.txt
    --musica "<Nome>" --imagens <png...>` (um só candidato, PDF-12).
    Troca de música: `partituras substituir --trabalho T --pasta <espelho> --musica "<Nome>"

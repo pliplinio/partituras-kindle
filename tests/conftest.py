@@ -67,8 +67,13 @@ def construir_html(
     auxiliar: bool = False,
     quebra: str = "\n",
     versao: int | None = 3,
+    ordenar: bool = True,
 ) -> bytes:
-    """Monta um HTML canônico pelo mesmo caminho de geração do código, com índice e set list."""
+    """Monta um HTML canônico pelo mesmo caminho de geração do código, com índice e set list.
+
+    Com `ordenar=False`, as páginas ficam na ordem de `musicas`, mesmo fora da ordem do set
+    list: é o caso dos HTMLs antigos, anteriores a SET-10.
+    """
     secoes: list[str] = []
     n = 3
     primeira: dict[str, str] = {}
@@ -120,7 +125,7 @@ def construir_html(
     )
     doc = Documento(texto)
     if setlist is not None:
-        doc, _ = reconstruir_setlist(doc, list(setlist))
+        doc, _ = reconstruir_setlist(doc, list(setlist), ordenar=ordenar)
     doc = reconstruir_indice(doc)
     return doc.para_bytes().replace(b"\n", quebra.encode())
 

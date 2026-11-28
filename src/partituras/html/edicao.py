@@ -19,6 +19,7 @@ from partituras.dominio.erros import Inconsistencia
 from partituras.dominio.indice import entradas_indice
 from partituras.dominio.modelos import Papel, Repertorio
 from partituras.dominio.nomes import normalizar, normalizar_forte, slug
+from partituras.dominio.repertorio import ordem_pelo_setlist
 from partituras.dominio.setlist import resolver
 from partituras.html import render
 from partituras.html.documento import META_VERSAO, Documento, Secao, atributos
@@ -80,13 +81,15 @@ class RelatorioSetlist:
 
 
 def reconstruir_setlist(
-    doc: Documento, titulos: Sequence[str] | None = None
+    doc: Documento, titulos: Sequence[str] | None = None, *, ordenar: bool = True
 ) -> tuple[Documento, RelatorioSetlist]:
     """Regenera o set list como texto HTML com links (SET-02 a SET-06, SET-09).
 
     Sem `titulos`, mantém os itens atuais e as ligações já declaradas. Com
     `titulos`, substitui o set list inteiro, resolvendo cada nome por
-    correspondência; ambiguidade interrompe (NOM-04).
+    correspondência; ambiguidade interrompe (NOM-04). Em seguida põe as páginas na
+    ordem do set list (SET-10); `ordenar=False` existe só para os testes montarem
+    HTMLs antigos, anteriores à regra.
     """
     secao = doc.secao(Papel.SETLIST)
     if secao is None:
@@ -120,7 +123,38 @@ def reconstruir_setlist(
 
     inicio = secao.inicio + len(secao.abertura)
     novo = doc.substituir(inicio, inicio + len(secao.corpo), render.corpo_setlist(itens_html))
+    if ordenar:
+        novo = ordenar_pelo_setlist(novo)
     return novo, relatorio
+
+
+# --- Ordem das páginas ---------------------------------------------------------------------
+
+
+def ordenar_pelo_setlist(doc: Documento) -> Documento:
+    """Põe as páginas do HTML na ordem do set list (SET-10).
+
+    Só move `section.slide` inteiras: o texto entre elas e tudo fora delas continua
+    idêntico (HTML-09). IDs, links e conteúdo das páginas não mudam. Sem set list, ou já
+    na ordem, devolve o mesmo documento.
+    """
+    secoes = doc.secoes
+    esperada = ordem_pelo_setlist(doc.repertorio())
+    if [s.attrs.get("id") for s in secoes] == esperada:
+        return doc
+    separadores = [doc.texto[a.fim : b.inicio] for a, b in zip(secoes, secoes[1:], strict=False)]
+    if any(sep.strip() for sep in separadores):
+        raise Inconsistencia(
+            "há conteúdo entre as páginas do HTML; reordenar mudaria bytes fora delas (HTML-09)"
+        )
+    por_id = {s.attrs.get("id"): s for s in secoes}
+    partes: list[str] = []
+    for i, id_ in enumerate(esperada):
+        if i:
+            partes.append(separadores[i - 1])
+        s = por_id[id_]
+        partes.append(doc.texto[s.inicio : s.fim])
+    return doc.substituir(secoes[0].inicio, secoes[-1].fim, "".join(partes))
 
 
 # --- Música ---------------------------------------------------------------------------------
@@ -232,8 +266,10 @@ def gravar_musica(
     """Inclui (`substituir=False`) ou troca (`substituir=True`) uma música (MUS-02 a MUS-08).
 
     Na troca, só o grupo selecionado muda; IDs existentes são reaproveitados.
-    Na inclusão, o grupo novo entra no fim, sem tocar nos existentes.
+    Na inclusão, o grupo novo entra na posição do set list ou, fora dele, depois das
+    outras músicas, sem tocar nos existentes. O HTML sai na ordem do set list (SET-10).
     """
+    doc = ordenar_pelo_setlist(doc)
     versao_antes = doc.versao_template
     repertorio = doc.repertorio()
     grupo_existente = localizar_musica(repertorio, pedido.titulo)
@@ -301,7 +337,7 @@ def gravar_musica(
 
     if not modo_overlay:
         novo = _garantir_css_score_native(novo)
-    novo, rel_setlist = reconstruir_setlist(novo)
+    novo, rel_setlist = reconstruir_setlist(novo)  # já reordena (SET-10)
     novo = reconstruir_indice(novo)
 
     relatorio = RelatorioMusica(
@@ -387,6 +423,7 @@ __all__ = [
     "RelatorioSetlist",
     "gravar_musica",
     "gravar_versao_template",
+    "ordenar_pelo_setlist",
     "reconstruir_indice",
     "reconstruir_setlist",
 ]
